@@ -7,7 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DrawerDeviceImage.h"
 
-@interface DrawerScrollView : UIScrollView
+#define leftBianJu                  60
+#define height_DrawerScrollView     90
 
+#define subImageWidth               95
+#define subImageHeight              60
+@interface DrawerScrollView : UIView <UIGestureRecognizerDelegate>
+@property (weak, nonatomic) IBOutlet UIImageView   *chouTiImage;
+@property (weak, nonatomic) IBOutlet UIScrollView  *chouTiScrollew;
+
+@property(nonatomic,assign)BOOL isOpen;
+
+-(void)appearAnimation;
+-(void)disappearAnimation;
+-(void)dataBaseRefresh;
 @end

@@ -4,7 +4,7 @@
 //
 //  Created by 鲁柯 on 2017/2/4.
 //  Copyright © 2017年 鲁柯. All rights reserved.
-//
+//  发现界面cell  发现cell
 
 #import "Discover_Cell.h"
 

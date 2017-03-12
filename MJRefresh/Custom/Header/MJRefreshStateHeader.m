@@ -51,6 +51,8 @@
     if (title == nil) return;
     self.stateTitles[@(state)] = title;
     self.stateLabel.text = self.stateTitles[@(self.state)];
+    //鲁柯修改
+    self.stateLabel.textColor=[LKTool from_16To_Color:refreshViewTextColor];
 }
 
 #pragma mark - 日历获取在9.x之后的系统使用currentCalendar会出异常。在8.0之后使用系统新API。
@@ -76,7 +78,8 @@
         self.lastUpdatedTimeLabel.text = self.lastUpdatedTimeText(lastUpdatedTime);
         return;
     }
-    
+    //鲁柯修改
+    self.lastUpdatedTimeLabel.textColor=[LKTool from_16To_Color:refreshViewTextColor];
     if (lastUpdatedTime) {
         // 1.获得年月日
         NSCalendar *calendar = [self currentCalendar];

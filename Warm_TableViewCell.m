@@ -4,7 +4,7 @@
 //
 //  Created by 鲁柯 on 2016/12/27.
 //  Copyright © 2016年 鲁柯. All rights reserved.
-//
+//  温暖界面cell
 
 #import "Warm_TableViewCell.h"
 
@@ -12,7 +12,7 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    // Initialization code
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

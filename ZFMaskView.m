@@ -87,7 +87,6 @@
     animation.repeatCount = MAXFLOAT;
     animation.fromValue = [NSValue valueWithCGPoint:CGPointMake(self.center.x, (self.frame.size.height - (self.frame.size.width - 120)) * 0.5)];
     animation.toValue = [NSValue valueWithCGPoint:CGPointMake(self.center.x, self.scanLineImg.frame.origin.y + self.frame.size.width - 120 - self.scanLineImg.frame.size.height * 0.5)];
-    
     return animation;
 }
 

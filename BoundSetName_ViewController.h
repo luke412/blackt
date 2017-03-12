@@ -7,7 +7,10 @@
 //
 
 #import "Base_ViewController.h"
-
+typedef void(^getNameBlock)(NSString *name);
 @interface BoundSetName_ViewController : Base_ViewController
-
+@property(nonatomic,copy)NSString     *macAddress;   //从上一界面传来的Mac地址
+@property(nonatomic,copy)getNameBlock myGetNameBlock;
+@property(nonatomic,assign)BOOL isModify;
+-(void)get_nameBlock:(getNameBlock)myGetNameBlock;
 @end

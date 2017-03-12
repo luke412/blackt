@@ -9,7 +9,72 @@
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 
-// Include any system framework and library headers here that should be included in all compilation units.
-// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#define VERSION_NUMBER    154
+//颜色
+//#define ThemeColor                   @"ff80a1"
+#define ThemeColor                     @"#333333"    //主题黑色 333333
+#define ThemeGrayColor                 @"f7f8f8"
+#define NAV_COLOR                      @"#242424"    //旧值：393939  导航条颜色
+#define tableViewBackGroundColor       @"#333333"
+#define chengSe                        @"#ed6d00"
+#define UI_COLOR_pink                  @"f4527c"
+#define current_temperature_textColor  @"676767"   //衣物温度字体颜色
+#define refreshViewTextColor           @"000000"   //下拉刷新字体颜色
+#define refreshArrowName               @"箭头.png"         //下拉刷新箭头名字 arrow.png  箭头.png
+#define chou_ti_blackGroundColor       @"f6f6f6"
 
+/*
+ * 最高档秒数
+ */
+#define MAX_UPSCALE                   65535
+
+
+//头文件
+#import "AFNetworking.h"
+#import "ClothesModel.h"        //衣物模型
+#import "LKTool.h"
+#import "LGBluetooth.h"
+#import "LGPeripheral.h"
+#import "LGCharacteristic.h"
+#import "FMDatabase.h"
+#import  "FMDatabaseAdditions.h" 
+#import "LKDataBaseTool.h"
+#import "LKPopupWindowManager.h"
+#import "MBProgressHUD+KR.h"
+#import "Base_ViewController.h"
+#import "Connecting_ViewController.h"
+#import "WarmShowInfoModel.h"
+
+#import "DOSingleton.h"
+#import "HeatingClothesBLEService.h"
+#import <BaiduMapAPI_Base/BMKBaseComponent.h>//引入base相关所有的头文件
+#import <BaiduMapAPI_Location/BMKLocationComponent.h>//引入定位功能所有的头文件
+#import <BaiduMapAPI_Map/BMKMapComponent.h>//引入地图功能所有的头文件
+#import <BaiduMapAPI_Utils/BMKUtilsComponent.h>
+
+
+
+typedef enum {
+    Connected,
+    Disconnect,
+    Connecting
+}ConnectionStatus;
+
+typedef enum {
+    Normal,
+    Unbundling,
+    ModifyName
+}WarmViewControllerState;
+
+typedef enum {
+    MyClothes,
+    HardwareInformation,
+    SystemMessage,
+    About
+}MASTER;
+
+#define BaiDuMapKey @"5kKUZYNZWc0KO29smLuwYMn7nCdSBy9D"
+
+//自定义错误码
+#define AAAAAA  @""  //错误码描述
 #endif /* PrefixHeader_pch */

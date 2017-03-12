@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface DingShiBtn : UIButton
-
+@property (weak, nonatomic) IBOutlet UIImageView *btnImageView;
+@property (weak, nonatomic) IBOutlet UILabel *zhuangtaiLabel;
+@property(nonatomic,assign) BOOL isSeted;
+@property (weak, nonatomic) IBOutlet UIImageView *leftImageView;
+-(void)reloadUI;
 @end

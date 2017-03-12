@@ -77,7 +77,8 @@ typedef void (^LGCentralManagerDiscoverPeripheralsCallback) (NSArray *peripheral
  * and fills the - NSArray *peripherals
  */
 - (void)scanForPeripherals;
-
+//蓝牙状态
+- (NSString *)stateMessage;
 /**
  * Makes scan for peripherals with criterias,
  * fills - NSArray *peripherals
@@ -120,6 +121,7 @@ typedef void (^LGCentralManagerDiscoverPeripheralsCallback) (NSArray *peripheral
 /**
  * Stops ongoing scan proccess
  */
+//停止扫描  停止正在进行的扫描
 - (void)stopScanForPeripherals;
 
 /**

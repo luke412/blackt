@@ -7,7 +7,7 @@
 //
 
 #import "Base_ViewController.h"
-
 @interface Connecting_ViewController : Base_ViewController
-
+@property(nonatomic,assign)BOOL isSearch;//要不要在本页搜索
+@property(nonatomic,copy)NSString *macAdress;
 @end

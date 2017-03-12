@@ -9,5 +9,5 @@
 #import "Base_ViewController.h"
 
 @interface Webpdf_ViewController : Base_ViewController
-
+@property(nonatomic,copy)NSString *pdfName;//pdf的名字
 @end

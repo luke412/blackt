@@ -9,5 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface ClothesModel : NSObject
-
+@property(nonatomic,copy)NSString *clothesMac;
+@property(nonatomic,copy)NSString *clothesName;
+@property(nonatomic,copy)NSString *clothesStyle;//衣物的类型
 @end

@@ -81,6 +81,13 @@
             ReferencedContainer = "container:BlackT2017.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "disable"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -106,6 +113,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
+      customArchiveName = "BlackT&#x63a2;&#x7d22;&#x7248;"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

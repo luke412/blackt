@@ -9,5 +9,18 @@
 #import <UIKit/UIKit.h>
 
 @interface DrawerDeviceImage : UIImageView
+@property(nonatomic,copy)NSString *deviceStyle;
+@property(nonatomic,copy)NSString     *deviceName;
+@property(nonatomic,copy)  NSString   *deviceMac;
+@property(nonatomic,assign) BOOL isSelected;
+@property (weak, nonatomic) IBOutlet UIImageView *deviceImage;
+@property (weak, nonatomic) IBOutlet UILabel *nameLbbel;
+@property (weak, nonatomic) IBOutlet UIButton *coverBtn;
+
+
+
+
+
+
 
 @end

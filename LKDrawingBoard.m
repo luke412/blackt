@@ -7,7 +7,6 @@
 //
 
 #import "LKDrawingBoard.h"
-
 @implementation LKDrawingBoard
 -(instancetype)initWithFrame:(CGRect)frame{
     self=[super initWithFrame:frame];
@@ -19,16 +18,34 @@
 
 -(void)createUI{
     self.intervalWidth=10;
-    self.temperatureLabelArr=[[NSMutableArray alloc]init];
-    self.pointArr           =[[NSMutableArray alloc]init];
-    
-    
+    self.TemperatureValueArr=[[NSMutableArray alloc]init];
+
 }
-//向画板上添加新的点
--(void)addNewPoint:(CGPoint)newPoint{
-    NSString* pointStr=NSStringFromCGPoint(newPoint);
-    [self.pointArr addObject:pointStr];
+/*
+ *  newTemperatureValueArr     存放新的温度值的数组
+ *  画线
+ *
+ */
+-(void)drawLinesWithTemperatureValueArr:(NSArray <NSNumber *>*)newTemperatureValueArr{
+    self.pointXArr=@[@(2),
+                     @(2+PointHorizontalSpacing),
+                     @(2+PointHorizontalSpacing*2),
+                     @(2+PointHorizontalSpacing*3),
+                     @(2+PointHorizontalSpacing*4),
+                     @(2+PointHorizontalSpacing*5),
+                     @(2+PointHorizontalSpacing*6),
+                     @(2+PointHorizontalSpacing*7)];
+    [self.TemperatureValueArr removeAllObjects];
+    [self.TemperatureValueArr addObjectsFromArray:newTemperatureValueArr];
+    [self removePoint];
     [self setNeedsDisplay];
+}
+-(void)removePoint{
+    if (self.TemperatureValueArr.count>7) {
+        [self.TemperatureValueArr removeObjectAtIndex:0];
+        [self removePoint];
+    }
+
 }
 - (void)drawRect:(CGRect)rect
 {       //画四边形
@@ -40,20 +57,33 @@
         //画圆弧
         //drawArc(self.progress,self.color);
         //画直线
-    [self drawLineWithPointArr:self.pointArr];
+    [self drawLineWithPointArr:self.TemperatureValueArr];
 }
 /*
  *画直线
  */
--(void)drawLineWithPointArr:(NSMutableArray *)pointArr
+-(void)drawLineWithPointArr:(NSMutableArray *)temperatureValueArr
 {
-    if (pointArr.count>0) {
+     [self removePoint];
+    if (temperatureValueArr.count>0) {
         CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextMoveToPoint(context, 0, 0);//先确立一个开始的点
-        for (int i=0; i<pointArr.count;i++) {
-            NSString *pointStr=pointArr[i];
-            CGPoint point=CGPointFromString(pointStr);
-            CGContextAddLineToPoint(context,point.x,point.y);//设置终点。如果多于两个点时，可以重复调用这个方法，就会有多个折线
+        CGContextMoveToPoint(context, -1, DrawingBoardHeight);//先确立一个开始的点
+        for (int i=0; i<temperatureValueArr.count;i++) {
+            //得到温度值  （Y）
+            NSNumber *valueY =temperatureValueArr[i];
+            float temperatureFloatY=[valueY floatValue];
+            
+            //得到X值
+            NSNumber *valueX =self.pointXArr[i];
+            float temperatureFloatX=[valueX floatValue];
+            
+            
+            CGPoint point2=CGPointMake(temperatureFloatX,(DrawingBoardHeight-temperatureFloatY*ZoomRatioPointY));
+            CGContextAddLineToPoint(context,point2.x,point2.y);//设置终点。如果多于两个点时，可以重复调用这个方法，就会有多个折线
+            NSLog(@"坐标 %.1f,%.1f",point2.x,point2.y);
+            NSString *str=[NSString stringWithFormat:@"%d°",(int)temperatureFloatY];//@"30°";
+            [str drawInRect:CGRectMake(point2.x-10, point2.y-15, 30, 5)withFont:[UIFont systemFontOfSize:10] lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
+            
         }
 
         CGContextSetLineWidth(context, 1.0);//后面的数值越大，线越粗

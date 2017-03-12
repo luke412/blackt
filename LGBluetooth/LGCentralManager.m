@@ -170,7 +170,7 @@
 /*----------------------------------------------------*/
 #pragma mark - Private Methods -
 /*----------------------------------------------------*/
-
+//蓝牙状态
 - (NSString *)stateMessage
 {
 	NSString *message = nil;
@@ -184,9 +184,13 @@
         case CBCentralManagerStateUnknown:
             message = @"Central not initialized yet.";
             break;
-		case CBCentralManagerStatePoweredOff:
-			message = @"Bluetooth is currently powered off.";
-			break;
+        case CBCentralManagerStatePoweredOff:{
+			 message = @"Bluetooth is currently powered off.";
+             NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+             NSNotification *notify = [[NSNotification alloc]initWithName:@"BluetoothOff" object:nil userInfo:nil];
+             [nc postNotification:notify];
+             break;
+            }
 		case CBCentralManagerStatePoweredOn:
             break;
 		default:
@@ -240,13 +244,15 @@
     });
 }
 
+//设备断开
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral
                  error:(NSError *)error
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         LGPeripheral *lgPeripheral = [self wrapperByPeripheral:peripheral];
-        [lgPeripheral handleDisconnectWithError:error];
+        [lgPeripheral handleDisconnectWithError:error];//断开连接
         [self.scannedPeripherals removeObject:lgPeripheral];
+        
     });
 }
 

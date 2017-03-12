@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -14,7 +18,66 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ln-7q-AsN">
+                    <rect key="frame" x="284" y="566" width="62" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="BXs-2E-StO"/>
+                        <constraint firstAttribute="width" constant="62" id="afh-eg-cDO"/>
+                    </constraints>
+                    <state key="normal" title="找找原因">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="ToFindTheReason:" destination="-1" eventType="touchUpInside" id="WJh-HE-Xeo"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设备连接失败" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yQO-PB-sN7">
+                    <rect key="frame" x="135" y="354" width="104" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="104" id="CTe-X3-Umd"/>
+                        <constraint firstAttribute="height" constant="21" id="S5a-Yq-QRk"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AXv-sp-yqK">
+                    <rect key="frame" x="118" y="394" width="138" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="hIf-9C-M2H"/>
+                        <constraint firstAttribute="width" constant="138" id="spT-B4-0Jh"/>
+                    </constraints>
+                    <state key="normal" title="请点击此处重新连接">
+                        <color key="titleColor" red="0.96870587691464638" green="0.99827522040000005" blue="0.82991250074526879" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="ConnectAgain:" destination="-1" eventType="touchUpInside" id="dEn-Lq-8Ub"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="连接失败.png" translatesAutoresizingMaskIntoConstraints="NO" id="USK-GM-wGn">
+                    <rect key="frame" x="132" y="222" width="111" height="111"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="111" id="a7I-wV-W0H"/>
+                        <constraint firstAttribute="height" constant="111" id="ofe-9O-xh2"/>
+                    </constraints>
+                </imageView>
+            </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="yQO-PB-sN7" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="AH3-DF-Wio"/>
+                <constraint firstItem="USK-GM-wGn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="222" id="CFK-68-dWK"/>
+                <constraint firstItem="AXv-sp-yqK" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="394" id="Lzw-ej-z00"/>
+                <constraint firstAttribute="trailing" secondItem="2ln-7q-AsN" secondAttribute="trailing" constant="29" id="bOL-Nd-wSA"/>
+                <constraint firstItem="USK-GM-wGn" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="feP-h3-QlJ"/>
+                <constraint firstAttribute="bottom" secondItem="2ln-7q-AsN" secondAttribute="bottom" constant="71" id="q2U-04-KhP"/>
+                <constraint firstItem="yQO-PB-sN7" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="354" id="xdO-bh-rW7"/>
+                <constraint firstItem="AXv-sp-yqK" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="yxV-Gx-Rhy"/>
+            </constraints>
+            <point key="canvasLocation" x="24.5" y="52.5"/>
         </view>
     </objects>
+    <resources>
+        <image name="连接失败.png" width="44" height="44"/>
+    </resources>
 </document>

@@ -9,5 +9,4 @@
 #import "Base_ViewController.h"
 
 @interface ConnectionFails_ViewController : Base_ViewController
-
 @end

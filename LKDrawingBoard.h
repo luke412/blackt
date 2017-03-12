@@ -7,12 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#define  DrawingBoardHeight   72   //画板高度
+#define  DrawingLineMaxHeight 72
+#define  ZoomRatioPointY      0.9  //纵坐标的缩放比
+#define  PointHorizontalSpacing         60   //两个温度画点的水平间距
 @interface LKDrawingBoard : UIScrollView
 
-@property(nonatomic,strong)NSMutableArray *temperatureLabelArr;     //存放温度标签的数组     （要注意复用）
-@property(nonatomic,strong)NSMutableArray <NSString *> *pointArr;     //存放坐标点的数组
+@property(nonatomic,strong)NSMutableArray <NSNumber *> *TemperatureValueArr;     //存放温度值的数组
+@property(nonatomic ,strong)NSArray *pointXArr;                        //存放横坐标的数组
 @property(nonatomic,assign)CGFloat intervalWidth;                   //间隔宽度
-
--(void)addNewPoint:(CGPoint)newPoint;
+-(void)drawLinesWithTemperatureValueArr:(NSArray <NSNumber *>*)newTemperatureValueArr;
 @end

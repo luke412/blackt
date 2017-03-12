@@ -40,8 +40,9 @@
 
 - (void)setActivityIndicatorViewStyle:(UIActivityIndicatorViewStyle)activityIndicatorViewStyle
 {
+    //修改菊花
     _activityIndicatorViewStyle = activityIndicatorViewStyle;
-    
+    // _activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhite;
     self.loadingView = nil;
     [self setNeedsLayout];
 }

@@ -1,12 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BoundSetName_ViewController">
             <connections>
+                <outlet property="nameTextField" destination="9RL-l3-tSf" id="Bbt-k6-olW"/>
+                <outlet property="queDingBtn" destination="lni-ia-KI1" id="mg0-6p-Se8"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -14,7 +20,40 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lni-ia-KI1">
+                    <rect key="frame" x="63" y="480" width="248" height="40"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="Asf-em-mq3"/>
+                        <constraint firstAttribute="width" constant="248" id="CTA-qd-dFx"/>
+                    </constraints>
+                    <state key="normal" title="确 定">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </state>
+                    <connections>
+                        <action selector="click:" destination="-1" eventType="touchUpInside" id="EGt-dv-iDl"/>
+                    </connections>
+                </button>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9RL-l3-tSf">
+                    <rect key="frame" x="63" y="415" width="248" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="248" id="Itz-xT-oMG"/>
+                        <constraint firstAttribute="height" constant="30" id="bVg-Sn-uqG"/>
+                    </constraints>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+            </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="lni-ia-KI1" firstAttribute="top" secondItem="9RL-l3-tSf" secondAttribute="bottom" constant="35" id="GT7-Jq-MDr"/>
+                <constraint firstItem="9RL-l3-tSf" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="415" id="Sxo-ad-IWO"/>
+                <constraint firstItem="9RL-l3-tSf" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="cyB-nT-6zg"/>
+                <constraint firstItem="lni-ia-KI1" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="jGe-z6-7T7"/>
+            </constraints>
+            <point key="canvasLocation" x="32.5" y="75.5"/>
         </view>
     </objects>
 </document>

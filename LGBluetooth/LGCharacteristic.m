@@ -167,7 +167,7 @@
 
 - (void)handleReadValue:(NSData *)aValue error:(NSError *)anError
 {
-    LGLog(@"Characteristic - %@ value - %s error - %@",
+    LGLog(@"鲁柯：Characteristic - %@ value - %s error - %@",
           self.cbCharacteristic.UUID, [aValue bytes], anError);
     
     if (self.updateCallback) {

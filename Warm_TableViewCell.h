@@ -9,5 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface Warm_TableViewCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UILabel *cellTitleLabel;
+
+@property (weak, nonatomic) IBOutlet UIImageView *rightImageV;
+
+
 
 @end

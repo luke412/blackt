@@ -20,7 +20,7 @@
 - (UIImageView *)arrowView
 {
     if (!_arrowView) {
-        UIImage *image = [UIImage imageNamed:MJRefreshSrcName(@"arrow.png")] ?: [UIImage imageNamed:MJRefreshFrameworkSrcName(@"arrow.png")];
+        UIImage *image = [UIImage imageNamed:MJRefreshSrcName(refreshArrowName)] ?: [UIImage imageNamed:MJRefreshFrameworkSrcName(refreshArrowName)];
         UIImageView *arrowView = [[UIImageView alloc] initWithImage:image];
         [self addSubview:_arrowView = arrowView];
     }
@@ -40,8 +40,9 @@
 #pragma mark - 公共方法
 - (void)setActivityIndicatorViewStyle:(UIActivityIndicatorViewStyle)activityIndicatorViewStyle
 {
+    //修改菊花
     _activityIndicatorViewStyle = activityIndicatorViewStyle;
-    
+    //_activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhite;
     self.loadingView = nil;
     [self setNeedsLayout];
 }

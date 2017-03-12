@@ -29,6 +29,7 @@
  * NSNotification which will be triggered by this identifier when
  * Peripheral will be connected
  */
+//已连接
 extern NSString * const kLGPeripheralDidConnect;
 
 /**
@@ -47,17 +48,20 @@ extern NSString * const kLGPeripheralDidDisconnect;
 /**
  * Error domains for Connection errors
  */
+//连接出错
 extern NSString * const kLGPeripheralConnectionErrorDomain;
 
 #pragma mark - Error Codes -
 /**
  * Connection timeout error code
  */
+//连接超时
 extern const NSInteger kConnectionTimeoutErrorCode;
 
 /**
  * Connection missing error code
  */
+//连接丢失
 extern const NSInteger kConnectionMissingErrorCode;
 
 #pragma mark - Error Messages -
@@ -152,6 +156,7 @@ typedef void(^LGPeripheralRSSIValueCallback)(NSNumber *RSSI, NSError *error);
  * Disconnects from peripheral peripheral
  * @param aCallback Will be called after successfull/failure disconnect
  */
+//断开连接
 - (void)disconnectWithCompletion:(LGPeripheralConnectionCallback)aCallback;
 
 /**

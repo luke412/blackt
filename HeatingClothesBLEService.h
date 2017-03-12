@@ -8,22 +8,87 @@
 
 #import <Foundation/Foundation.h>
 #import "LGBluetooth.h"
+
+@protocol  ChangeStateDelegate <NSObject>
+@required
+-(void)changeState:(NSString *)text;
+@end
+
+
+
+
+
+
 extern NSString * const HeatingClothesBLEConected;
 extern NSString * const HeatingClothesBLEDisconnect;
 
 
 @interface HeatingClothesBLEService : DOSingleton
+
+@property (nonatomic,strong)dispatch_queue_t myQueue;
+
+
+@property(nonatomic,strong)NSTimer *timer;
+@property (nonatomic, weak) id <ChangeStateDelegate>delegate;
+@property(nonatomic,strong) Base_ViewController *myViewController;//存放需要跳转的界面
+@property(nonatomic,assign)BOOL isBound;     //是否是绑定操作
 @property(nonatomic, retain)NSMutableDictionary *peripheralsDictionary;
 @property(nonatomic, retain)NSMutableDictionary *sendDataCharacteristicDictionary;
 @property(nonatomic, retain)NSMutableDictionary *reciveDataCharacteristicDictionary;
+@property(nonatomic,assign)int SearchNumber;//搜索次数
+-(int)getDaoJiShi_Mac:(NSString *)macAddress;
+
+
+- (LGCharacteristic *)getReciveDataCharacteristic:(NSString *)macAddress;
+- (LGCharacteristic *)getSendDataCharacteristic:(NSString *)macAddress;
+- (LGPeripheral *)getCachedPeripheral:(NSString *)macAddress;
+-(float)getDangQianWenDu_Mac:(NSString *)macAddress;
+/*
+ * 获取一个缓存设备
+ */
+-(LGPeripheral *)getCachedPeripheral:(NSString *)mac;
+/*
+ *  读取一个展板的信息
+ */
+-(WarmShowInfoModel *)ReadInfoFromBluetoothWith:(NSString *)macAddress;
 /*
  *  设置服务
  */
 - (void)setupService;
 /*
+ *  清除某个设备
+ */
+- (void)cleanDevice:(NSString *)macAddress;
+/*
+ *  开始心跳
+ */
+-(void)startTheHeart;
+/*
+ * 停止心跳
+ */
+-(void)stopTheHeart;
+/*
  *  开始扫描
  */
-- (void)startScanBLEDevice;
+- (void)StartScanningDeviceWithMac:(NSString *)mac;
+/*
+ *  初始化记录字典（初始化缓存）
+ */
+- (void)initCacheDictionary;
+/*
+ *  尝试连接设备
+ */
+- (void)testPeripheral:(LGPeripheral *)peripheral WithMac:(NSString *)mac;
+/*
+ *  向指定设备发射心跳命令，防止其断开连接
+ */
+-(void)KeepTheHeart;
+/*
+ *  获取已经绑定的设备mac数组
+ *  返回值：已经绑定的设备的mac数组
+ */
+- (NSArray *)getHaveBindingDevice;
+
 /*
  *  查询是都连接
  */
@@ -67,9 +132,9 @@ extern NSString * const HeatingClothesBLEDisconnect;
 /*
  *  写入倒计时时间
  */
-- (void)writeHeatTimeCount:(NSString *)macAddress value:(uint)valueToWrite andandsendChara:(LGCharacteristic *)sendChara andreciveChara:(LGCharacteristic *)reciveChara;
+- (BOOL)writeHeatTimeCount:(NSString *)macAddress value:(uint)valueToWrite andandsendChara:(LGCharacteristic *)sendChara andreciveChara:(LGCharacteristic *)reciveChara;
 /*
  *  写入最高温度
  */
-- (void)writeSettedTemperature:(NSString *)macAddress value:(uint)valueToWrite andandsendChara:(LGCharacteristic *)sendChara andreciveChara:(LGCharacteristic *)reciveChara;
+- (BOOL)writeSettedTemperature:(NSString *)macAddress value:(uint)valueToWrite andandsendChara:(LGCharacteristic *)sendChara andreciveChara:(LGCharacteristic *)reciveChara;
 @end
