@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Connecting_ViewController">
             <connections>
+                <outlet property="chongLian" destination="BbD-Tj-v9E" id="FQP-DX-J6b"/>
                 <outlet property="isTooSlowBtn" destination="Dh2-m9-AF1" id="jxS-Do-KRJ"/>
                 <outlet property="percentageLabel" destination="JxS-IB-kgW" id="e4B-iX-C9y"/>
                 <outlet property="progressView" destination="gE5-wd-xqH" id="aLG-8r-tdN"/>
-                <outlet property="titleLabel" destination="Iqs-XJ-keP" id="BZo-dj-GgR"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -23,27 +23,23 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dh2-m9-AF1">
-                    <rect key="frame" x="275" y="569" width="84" height="30"/>
+                <button opaque="NO" contentMode="right" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dh2-m9-AF1">
+                    <rect key="frame" x="9" y="260" width="142" height="30"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="30" id="Ghr-hQ-WLa"/>
-                        <constraint firstAttribute="width" constant="84" id="JTg-ia-p3v"/>
+                        <constraint firstAttribute="width" constant="142" id="4Z4-FL-YCZ"/>
+                        <constraint firstAttribute="height" constant="30" id="NWu-Bh-xAU"/>
                     </constraints>
                     <state key="normal" title="连接过慢">
-                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="titleColor" red="0.3961358666" green="0.392167449" blue="0.3920598924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="isToolSlowClick:" destination="-1" eventType="touchUpInside" id="mBj-SJ-ovY"/>
                     </connections>
                 </button>
                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="gE5-wd-xqH">
-                    <rect key="frame" x="81" y="201" width="213" height="2"/>
+                    <rect key="frame" x="48" y="204" width="279" height="2"/>
                     <color key="tintColor" red="1" green="0.49574702980000002" blue="0.62851506469999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="2" id="VAb-Hn-7mc"/>
-                        <constraint firstAttribute="width" constant="213" id="jdS-76-K9D"/>
-                    </constraints>
-                    <color key="progressTintColor" red="0.84383793239310267" green="0.99827522040000005" blue="0.99796490681966354" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="progressTintColor" red="0.97470551729202271" green="0.7220805287361145" blue="0.031502202153205872" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </progressView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="54%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JxS-IB-kgW">
                     <rect key="frame" x="150" y="161" width="75" height="21"/>
@@ -52,44 +48,35 @@
                         <constraint firstAttribute="width" constant="75" id="hNR-J1-1rT"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="textColor" red="0.3961358666" green="0.392167449" blue="0.3920598924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BbD-Tj-v9E">
-                    <rect key="frame" x="33" y="569" width="31" height="30"/>
+                <button opaque="NO" contentMode="left" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BbD-Tj-v9E">
+                    <rect key="frame" x="262" y="260" width="77" height="30"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="30" id="h1Z-ll-hoz"/>
-                        <constraint firstAttribute="width" constant="31" id="jYx-U7-PYu"/>
+                        <constraint firstAttribute="width" constant="77" id="LBx-p6-TK1"/>
+                        <constraint firstAttribute="height" constant="30" id="sWq-LC-wNm"/>
                     </constraints>
                     <state key="normal" title="重连">
-                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="titleColor" red="0.3961358666" green="0.392167449" blue="0.3920598924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
                         <action selector="chongLian:" destination="-1" eventType="touchUpInside" id="rX7-Qm-fR6"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" 正在搜索设备... " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iqs-XJ-keP">
-                    <rect key="frame" x="83" y="261" width="208" height="21"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="Mcw-6r-GVN"/>
-                        <constraint firstAttribute="width" constant="208" id="rbd-75-CfG"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="gE5-wd-xqH" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="48" id="4UA-07-Okb"/>
+                <constraint firstItem="gE5-wd-xqH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="204" id="IRt-ja-8Oy"/>
                 <constraint firstItem="JxS-IB-kgW" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="161" id="Ns1-p1-2UJ"/>
-                <constraint firstItem="gE5-wd-xqH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="201" id="YMr-dr-lce"/>
-                <constraint firstItem="Iqs-XJ-keP" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="261" id="egN-L8-zRT"/>
-                <constraint firstItem="gE5-wd-xqH" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="fn2-HD-zyh"/>
-                <constraint firstAttribute="trailing" secondItem="Dh2-m9-AF1" secondAttribute="trailing" constant="16" id="fpp-Ay-PKX"/>
-                <constraint firstAttribute="bottom" secondItem="BbD-Tj-v9E" secondAttribute="bottom" constant="68" id="mgE-Nr-XBM"/>
-                <constraint firstItem="BbD-Tj-v9E" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="33" id="njD-mA-4mS"/>
+                <constraint firstAttribute="trailing" secondItem="BbD-Tj-v9E" secondAttribute="trailing" constant="36" id="Ws1-fu-sg4"/>
+                <constraint firstItem="Dh2-m9-AF1" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="260" id="cfX-sj-z4t"/>
+                <constraint firstAttribute="trailing" secondItem="gE5-wd-xqH" secondAttribute="trailing" constant="48" id="kUF-RH-0jl"/>
                 <constraint firstItem="JxS-IB-kgW" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="qe3-SC-Yrg"/>
-                <constraint firstItem="Iqs-XJ-keP" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="s0q-h6-tKA"/>
-                <constraint firstAttribute="bottom" secondItem="Dh2-m9-AF1" secondAttribute="bottom" constant="68" id="wpz-QT-1tI"/>
+                <constraint firstItem="gE5-wd-xqH" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="rBY-Qf-kt4"/>
+                <constraint firstItem="BbD-Tj-v9E" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="260" id="tTs-35-T2C"/>
+                <constraint firstItem="Dh2-m9-AF1" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="9" id="y3b-Cl-JvI"/>
             </constraints>
             <point key="canvasLocation" x="24.5" y="51.5"/>
         </view>

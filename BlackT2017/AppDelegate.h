@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UMessage.h"
+#import <UserNotifications/UserNotifications.h>
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 {
@@ -15,6 +17,7 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
--(void)BluetoothPowerOff;
+-(void)goToLogViewController;
+-(void)goToMainViewController;
 @end
 

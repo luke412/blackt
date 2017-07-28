@@ -8,53 +8,40 @@
 //  正在连接设备界面  连接中
 
 #import "Connecting_ViewController.h"
-#import "ToolSlowInstructions_ViewController.h"
-#import "ConnectionFails_ViewController.h"
+#import "BoundSetName_ViewController.h"
+#import "BlueManager.h"
+#import "YiChangManager.h"
 @interface Connecting_ViewController ()<ChangeStateDelegate>
 {
     NSTimer * _timer;
 }
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (nonatomic,strong) MBProgressHUD *hud;
-@property (weak, nonatomic) IBOutlet UIButton       *isTooSlowBtn;
-@property (weak, nonatomic) IBOutlet UILabel        *percentageLabel;
-@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic ) IBOutlet UILabel        *titleLabel;
+@property (nonatomic,strong) MBProgressHUD  *hud;
+@property (weak, nonatomic ) IBOutlet UIButton       *isTooSlowBtn;
+@property (weak, nonatomic ) IBOutlet UILabel        *percentageLabel;
+@property (weak, nonatomic ) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic ) IBOutlet UIButton       *chongLian;
+
 @end
 
 @implementation Connecting_ViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    //将控制器放入单例数组保存
-    HeatingClothesBLEService *BLEService=[HeatingClothesBLEService sharedInstance];
-    BLEService.delegate=self;
-    BLEService.myViewController=nil;
-    BLEService.myViewController=self;
-    
-    UILabel *title        = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 50)];
-    title.textColor       = [UIColor whiteColor];
-    title.backgroundColor = [UIColor clearColor];
-    title.textAlignment = NSTextAlignmentCenter;
-    title.text = @"连接设备";
-    title.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
-    self.navigationItem.titleView = title;
-    
-    UIButton *leftButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,40,40)];
-      [leftButton setTitle:@"返回" forState:UIControlStateNormal];
-      [leftButton addTarget:self action:@selector(leftButtonClick)forControlEvents:UIControlEventTouchUpInside];
-      UIBarButtonItem *leftItem = [[UIBarButtonItem alloc]initWithCustomView:leftButton];
-      self.navigationItem.leftBarButtonItem=leftItem;
-
-}
 -(void)viewWillAppear:(BOOL)animated{
-    NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-    [nc addObserver:self selector:@selector(IsConnected:) name:kLGPeripheralDidConnect object:nil];
-    [nc addObserver:self selector:@selector(ConnectionFails:) name:@"ConnectionFails" object:nil];
+    [super viewWillAppear:NO];
+    [self timerRun];
+    NSString *mac = App_Manager.QRcodeCacheMac;
+    [Blue_Manager smartctionWithMac:mac Sucess:^(NSString *mac) {
+        [MBProgressHUD hideHUD];
+        //写入衣物名字界面
+        BoundSetName_ViewController *boundSetNameVC = [[BoundSetName_ViewController alloc]init];
+        [self.navigationController pushViewController:boundSetNameVC animated:NO];
+        self.hidesBottomBarWhenPushed=NO;
+        [self TimerhuiFu];
+        
+    } Failure:^(NSString *mac) {
+        [self ConnectionFails];
+    } andIsRunDelegate:YES];
     
-    //在此加载动图
-    self.progressView.progress=0.0;
-    self.percentageLabel.text=@"0%%";
-    _timer = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(everyTime) userInfo:nil repeats:YES];
+    
 }
 -(void)viewWillDisappear:(BOOL)animated{
     //停止连接，连接被用户中断
@@ -62,70 +49,98 @@
     [_hud removeFromSuperview];
     [self TheLast];
 }
--(void)leftButtonClick{
-    [self.navigationController popToRootViewControllerAnimated:NO];
-}
-
--(void)changeState:(NSString *)text{
-    self.titleLabel.text=text;
-}
-
--(void)everyTime{
-    //超时
-    if (self.progressView.progress>0.99) {
-        [self ConnectionFails:nil];
-        return;
-    }
-    self.progressView.progress+=0.0014;
-    self.percentageLabel.text=[NSString stringWithFormat:@"%.0f%%",self.progressView.progress*100];
-}
-//已经连接
--(void)IsConnected:(NSNotification *)notify{
-//    [self.navigationController popViewControllerAnimated:NO];
-}
--(void)ConnectionFails:(NSNotification *)notify{
-    NSLog(@"Connecting_ViewController:连接失败");
-    [self performSelector:@selector(pop) withObject:nil afterDelay:1];
-    //延时回退
-}
--(void)pop{
-    //如果当前界面是 “连接过慢界面”就不再推到 “连接失败界面”
-    NSArray <UIViewController *> *activeVCArray=[self getCurrentVC];
-    UITabBarController *tab=activeVCArray[0];
-    UINavigationController *nav=tab.viewControllers[0];
-    NSLog(@"nav的数组是  %@",nav.viewControllers);
-        NSArray *navVCArr=nav.viewControllers;
-        UIViewController *currentVC=[navVCArr lastObject];
-         NSString *classStr=[NSString stringWithUTF8String:object_getClassName(currentVC)];
-        NSLog(@"从%@界面跳过来 ",classStr);
-
-    if (![classStr isEqualToString:@"Connecting_ViewController"]){//不是从“正在连接”界面进入就不显示连接失败
-        return;
-    }
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    //将控制器放入单例数组保存
+    HeatingClothesBLEService *BLEService=[HeatingClothesBLEService sharedInstance];
+    BLEService.delegate = self;
+    [self setTittleWithText:LK(@"连接设备")];
+    [_isTooSlowBtn setTitle:LK(@"连接过慢") forState:UIControlStateNormal];
+    _titleLabel.text      = LK(@"正在搜索设备...");
+    [_chongLian setTitle:   LK(@"重连") forState:UIControlStateNormal];
     
-    ConnectionFails_ViewController *vc=[[ConnectionFails_ViewController alloc]init];
-    vc.navigationItem.hidesBackButton = YES;
-    [self.navigationController pushViewController:vc animated:NO];
+    //计时器和进度
+    self.progressView.progress = 0.0;
+    self.percentageLabel.text  = @"0%";
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(everyTime) userInfo:nil repeats:YES];
+    [_timer setFireDate:[NSDate distantFuture]];
+    
+    UIButton *rightButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,38,30)];
+        [rightButton setTitle:@"取消" forState:UIControlStateNormal];
+        [rightButton addTarget:self action:@selector(rightButtonClick)forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *rightItem = [[UIBarButtonItem alloc]initWithCustomView:rightButton];
+        self.navigationItem.leftBarButtonItem=rightItem;
+
+    
+}
+#pragma mark - 通知响应
+#pragma mark - 蓝牙回调
+-(void)ConnectionFails{
+    YiChangManager *yiChangManager = [[YiChangManager alloc]init];
+    [yiChangManager showViewControllers_vc:self];
+}
+#pragma mark - 用户事件
+-(void)rightButtonClick{
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 //连接过慢点击
 - (IBAction)isToolSlowClick:(id)sender{
-    //self.hidesBottomBarWhenPushed=YES;
-    ToolSlowInstructions_ViewController *vc=[[ToolSlowInstructions_ViewController alloc]init];
-    //vc.navigationItem.hidesBackButton = YES;
-    [self.navigationController pushViewController:vc animated:NO];
+    
 }
 
 //点击重连
 - (IBAction)chongLian:(id)sender{
-    [MBProgressHUD showSuccess:@"重新连接"];
-    self.progressView.progress=0.0;
-    self.percentageLabel.text=@"0%%";
-    
+    [MBProgressHUD showSuccess:LK(@"重新连接")];
+    [self TimerhuiFu];
+    //停止连接，连接被用户中断
+    [[LGCentralManager sharedInstance] stopScanForPeripherals];
+    NSString *mac = App_Manager.QRcodeCacheMac;
+    [Blue_Manager smartctionWithMac:mac Sucess:^(NSString *mac) {
+        [MBProgressHUD hideHUD];
+        //写入衣物名字界面
+        BoundSetName_ViewController *boundSetNameVC = [[BoundSetName_ViewController alloc]init];
+        [self.navigationController pushViewController:boundSetNameVC animated:NO];
+        self.hidesBottomBarWhenPushed=NO;
+        [self TimerhuiFu];
+        
+        
+    } Failure:^(NSString *mac) {
+        [self ConnectionFails];
+    } andIsRunDelegate:YES];
+    [self timerRun];
+}
+#pragma mark - 计时器
+-(void)timerRun{
+      [_timer setFireDate:[NSDate date]];
+}
+/**计时器停止*/
+-(void)timerStop{
+    [_timer setFireDate:[NSDate distantFuture]];
+}
+/**计时器复位，UI恢复初始状态*/
+-(void)TimerhuiFu{
+    self.progressView.progress = 0.0;
+    self.percentageLabel.text  = @"0%";
+    [_timer setFireDate:[NSDate distantFuture]];
+}
+-(void)everyTime{
+    //超时
+    if (self.progressView.progress>0.98) {
+        [self TimerhuiFu];
+    }
+    self.progressView.progress += 0.0014;
+    self.percentageLabel.text  =[NSString stringWithFormat:@"%.0f%%",self.progressView.progress*100];
 }
 
+#pragma mark - 代理
+-(void)changeState:(NSString *)text{
+    self.titleLabel.text = text;
+}
+#pragma mark - 清理
 -(void)dealloc
 {
-       [self TheLast];
+    [self TheLast];
+    
 }
 
 //释放定时器,消除通知等善后事宜
@@ -133,47 +148,11 @@
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc removeObserver:self];
         if (_timer != nil) {
-                //销毁定时器
-                [_timer invalidate];
-            }
+            //销毁定时器
+            [_timer invalidate];
+        }
   }
 
-#pragma mark 获取当前正在显示的VC
-- (NSArray <UIViewController *> *)getCurrentVC
-{
-    UIViewController *result = nil;
-    
-    UIWindow * window = [[UIApplication sharedApplication] keyWindow];
-    if (window.windowLevel != UIWindowLevelNormal)
-    {
-        NSArray *windows = [[UIApplication sharedApplication] windows];
-        for(UIWindow * tmpWin in windows)
-        {
-            if (tmpWin.windowLevel == UIWindowLevelNormal)
-            {
-                window = tmpWin;
-                break;
-            }
-        }
-    }
-    
-    NSMutableArray *vcArr=[[NSMutableArray alloc]init];
-    for (int i=0; i<[window subviews].count; i++) {
-        UIView *frontView = [[window subviews] objectAtIndex:i];
-         id nextResponder = [frontView nextResponder];
-        if ([nextResponder isKindOfClass:[UIViewController class]]){
-            [vcArr addObject:nextResponder];
-        }
-            
-        else{
-            result = window.rootViewController;
-            [vcArr addObject:result];
-        }
-
-    }
-    NSArray *vcNSArray=[[NSArray alloc]initWithArray:vcArr];
-    return vcNSArray;
-}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

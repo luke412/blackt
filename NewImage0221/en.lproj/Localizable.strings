@@ -1,0 +1,193 @@
+/* 
+  Language.strings
+  BlackT2017
+
+  Created by 鲁柯 on 2017/3/14.
+  Copyright © 2017年 鲁柯. All rights reserved.
+*/
+//英语 :
+"温暖"                = "Warm";
+"调温"                = "Attemperation";
+"硬件版本"             ="Hardware Version";
+"电池容量"             ="Battery Capacity";
+"时间"                ="time";
+"石墨烯加热片数"        ="Graphene Heat Number";
+"已连接"               ="Connected";
+"石墨烯加热片长度"       ="Graphene Heating Piece Length";
+"未连接"               ="Ununited";
+"石墨烯加热片宽度"      ="Graphene Heating Width";
+"官网公众号"           ="Official Public Number";
+"预设"                ="preinstall";
+"公司官网"             ="Company Official Website";
+"温度预设"             ="Temperature Preset";
+"微信公众号"           ="WeChat Public";
+"摄氏度"              ="degree Celsius";
+"绑定衣物"             ="Bind Clothes";
+"预设时间"             ="Preset Time";
+"暂不绑定"             ="Cancel";
+"不限时"               ="Unlimited";
+"扫码"                ="Scan Code";
+"时间预设"             ="Time Preset";
+"连接失败"             ="Connection Failed";
+"分钟"                ="Minute";
+"设备连接失败"         ="Connection Failed";
+"开关"                ="switch";
+"请点击此处重新连接"    ="Please Reconnect";
+"发现"                ="Discover";
+"找找原因"             ="Find Reasons";
+"我的"                 ="Mine";
+"取消"                 ="Cancel";
+"返回"                 ="Back";
+"将二维码放入框内中央，即可自动扫描" ="Automatic scanning
+";
+"衣物信息"           ="Clothing Information";
+"连接设备"           ="Connecting Device";
+"产品名称"           ="Product Name";
+"正在搜索设备"            ="Searching Device";
+"生产地"            ="Yieldly";
+"重连"             ="Reconnection";
+"固件版本"          ="Firmware Version";
+"连接过慢"          ="Slow Connection";
+"请输入衣物名称"     ="Please enter your name";
+"请确认盒子电源打开"  ="Please make sure the box is open";
+"设备连接中"         ="Device connection";
+"点这里绑定衣物"           ="Click here to bind clothes";
+"解绑"              ="Unbund";
+"修改衣物名称"       ="Rename";
+"停止加热"          ="Stop";
+"删除成功"          ="Success";
+"解绑衣物"          ="Unbund";
+"衣物改名"          ="Rename";
+"未定时"            ="NotSet";
+"已定时"            ="Setting";
+"正在连接中"         ="Connecting";
+"连接"              ="Connect";
+"已开启"             ="Open";
+"已关闭"             ="Close";
+
+/*
+ *  温暖界面
+ */
+"请选定解绑设备"                          ="Please Select Devices";
+"解绑成功"                              ="Unbund Success";
+"解绑失败"                              ="Unbund Failure";
+"连接失败"                              ="Connection Fails";
+"暂无绑定设备，不需使用此功能"             ="Nothing";
+"设置成功"                              ="Success";
+"设置失败"                              ="Failure";
+"请连接设备"                             ="Please Connect";
+"目标"                                  ="Target";
+"当前"                                  ="Present";
+"您还没有已绑设备"                        ="Nothing";
+"请先绑定设备"                           ="Please Bind";
+
+/*
+ *  绑定衣物界面
+ */
+"扫   码"                             ="Scan QR code";
+"扫 码"                               ="Scan QR code";
+"将 二维码/条形码 放入框内中央，即可自动扫描" = "Put the qr code/barcode in the middle box, can automatically scan";
+"确  定"                                      ="OK";
+"绑定衣物"                                      ="Bind Clothes";
+"我的Black T"                           = "My Black T";
+"我的Black Care"                        = "My Black Care";
+"其他衣物"                               = "Other";
+
+/*
+ *  连接过慢界面
+ */
+"连接步骤"                                  ="Connection step";
+"跳过"                                     ="skip";
+"第一步"                                  ="No.1";
+"第二步"                                  ="No.2";
+"第三步"                                  ="No.3";
+"第四步"                                  ="No.4";
+"请确定电池有电"                           ="Please make sure the battery is charged";
+"按右键，蓝灯亮起，确认盒子有电，蓝灯不亮，请充电 "
+="";
+"图示下拨档位键，看到红灯亮起"
+="";
+
+"请确认Black T与控制盒连接好，否则会接触不良。"
+="";
+
+"App需要您的同意,获取定位权限，以便分析当地气候，给出加温方案，保持蓝牙连接" = "App need your approval, to obtain positioning permissions, so that the analysis of local climate, heating scheme are given, keep a bluetooth connection";
+
+
+/*
+ *  发现界面
+ */
+"发 现"                               ="Discover";
+"商城"                                ="Mall";
+"位置"                                ="Location";
+"位 置"                                ="Location";
+"商 城"                                ="Mall";
+
+/*
+ *  我的界面
+ */
+"我 的"                               ="Mine";
+"衣物信息"                               ="Clothing Information";
+"系统消息"                               ="System message";
+"关于"                               ="About";
+"帮助"                               ="Help";
+
+/*
+ *  衣物信息界面
+ */
+"北京创新爱尚家科技股份有限公司"            ="Aika Innovative Technology Co.,Ltd";
+"暂无已绑定衣物"                                ="There's nothing";
+"产品名称"                                ="Product Name";
+"出品"                                 ="Producers";
+"固件版本"                                ="Firmware Version";
+"硬件版本"                                ="Hardware Version";
+"系统消息"                                ="System Message";
+"暂无内容"                                ="There's nothing";
+"关 于"                                ="About";
+"公司介绍"                                ="Company Introduction";
+"官网公众号"                                ="Website & Public no.";
+"帮 助"                                ="Help";
+"产品说明书"                                ="Product Manual";
+"公司官网"                                ="Website";
+"说明书"                                ="Instructions";
+"微信公众号"                                ="WeChat public no.";
+"微信公众号"                                ="WeChat public no.";
+
+
+/*
+ *  提示窗
+ */
+"没有网络连接"                            ="No Internet connection";
+"网络未连接"                              ="Network is not connected";
+"此衣物已绑定,名称为"                        ="Already existing";
+"提示"                                    ="Prompt";
+"Mac地址验证失败"                           ="Validation fails";
+"知道了"                                   ="OK";
+"已取消绑定"                              ="Has been cancelled";
+"修改衣物名称"                             ="Change clothes name";
+"衣物名称不能为空"                          ="Name cannot be empty";
+"字符长度超过15位"                           ="More than 15 characters in length";
+"名称不能为空"                             ="Name cannot be empty";
+"此名称已被占用，请重新输入"                           ="This name has been occupied, please enter again";
+"修改名称成功"                           ="Success";
+"修改名称失败"                           ="Failure";
+"绑定成功"                              ="Success";
+"发现新版本，是否升级"                              ="Found the new version, whether to upgrade";
+"升级"                                 ="upgrade";
+"控制盒与BlackT接触不良，请确认是否连接"     ="Lost connection";
+"绑定成功"                              ="Success";
+"连接过慢"                              ="Connection too slow";
+"正在搜索设备..."                         ="Searching...";
+"重连"                               ="Reconnect";
+"温馨提示"                               ="Reminder";
+"打开蓝牙，可以使设备和手机数据传输"
+="App requires your consent to obtain location permissions in order to analyze the local climate, give the heating program, and maintain the Bluetooth connection";
+"暂时不开"                                 ="NO";
+"去打开定位"                               ="YES";
+"请扫描标注“设备地址”的二维码"
+="Please scan the “device address” of the QR code";
+"扫码需要您的相机授权，请在设置-隐私-相机中打开授权，然后重启应用"
+="Scan code requires your camera authorization, please open the authorization in the settings - Privacy - camera, and then restart the application";
+"暂时不要"                               ="NO";
+"去设置"                               ="YES";
+"发现设备，连接中..."                                    ="In connection...";

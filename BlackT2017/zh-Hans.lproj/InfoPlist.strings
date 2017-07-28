@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  BlackT2017
+
+  Created by 鲁柯 on 2017/3/21.
+  Copyright © 2017年 鲁柯. All rights reserved.
+*/
+NSLocationAlwaysUsageDescription      ="App需要您同意，获取定位权限，保持设备和手机持续连接不中断，并且可以与好友互看地理位置";
+NSCameraUsageDescription    ="扫码需要您的相机授权，请在设置-隐私-相机中设置";

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="XiaoXiXiangQing_ViewController">
+            <connections>
+                <outlet property="text_textView" destination="UJH-9C-txe" id="sJO-hH-XYq"/>
+                <outlet property="title_label" destination="DcG-OE-Tqn" id="eOS-kb-Ym5"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="UJH-9C-txe">
+                    <rect key="frame" x="32" y="128" width="311" height="492"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DcG-OE-Tqn">
+                    <rect key="frame" x="89" y="83" width="196" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="196" id="3WP-Y2-NBU"/>
+                        <constraint firstAttribute="height" constant="21" id="4gc-lS-7xO"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="DcG-OE-Tqn" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="2yv-Bv-joP"/>
+                <constraint firstAttribute="bottom" secondItem="UJH-9C-txe" secondAttribute="bottom" constant="47" id="7Qc-xh-nr7"/>
+                <constraint firstItem="UJH-9C-txe" firstAttribute="top" secondItem="DcG-OE-Tqn" secondAttribute="bottom" constant="24" id="DLH-ic-leg"/>
+                <constraint firstAttribute="trailing" secondItem="UJH-9C-txe" secondAttribute="trailing" constant="32" id="JZx-I0-7Al"/>
+                <constraint firstItem="UJH-9C-txe" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="32" id="Tcq-u4-9Ac"/>
+                <constraint firstItem="DcG-OE-Tqn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="83" id="oVc-4i-jK5"/>
+            </constraints>
+            <point key="canvasLocation" x="25.5" y="51.5"/>
+        </view>
+    </objects>
+</document>

@@ -19,7 +19,7 @@
 -(void)createUI{
     self.intervalWidth=10;
     self.TemperatureValueArr=[[NSMutableArray alloc]init];
-
+   
 }
 /*
  *  newTemperatureValueArr     存放新的温度值的数组

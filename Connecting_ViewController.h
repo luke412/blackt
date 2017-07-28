@@ -7,7 +7,12 @@
 //
 
 #import "Base_ViewController.h"
+
+
+
 @interface Connecting_ViewController : Base_ViewController
-@property(nonatomic,assign)BOOL isSearch;//要不要在本页搜索
+@property(nonatomic,assign)BOOL  isSearch;//要不要在本页搜索
 @property(nonatomic,copy)NSString *macAdress;
+@property(nonatomic,copy)NSString *superVCName;  //KC01_JianCha_ViewController
+@property(nonatomic,copy)NSString *deviceType;   //KC01 KC02
 @end

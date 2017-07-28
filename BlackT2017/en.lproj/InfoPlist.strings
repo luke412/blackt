@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  BlackT2017
+
+  Created by 鲁柯 on 2017/3/21.
+  Copyright © 2017年 鲁柯. All rights reserved.
+*/
+NSLocationAlwaysUsageDescription      ="App need your approval, to obtain positioning permissions, so that the analysis of local climate, heating scheme are given, keep a bluetooth connection";
+
+NSCameraUsageDescription   ="He need your camera authorization, please set in the Settings - privacy - the camera";

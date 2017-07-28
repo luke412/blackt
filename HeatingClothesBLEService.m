@@ -8,9 +8,10 @@
 
 #import "HeatingClothesBLEService.h"
 #import "LGBluetooth.h"
+#import "BLEUdidManager.h"
+#import "DataBaseManager.h"
 
-
-NSString * const HeatingClothesBLEConected = @"HeatingClothesBLEConected";
+NSString * const HeatingClothesBLEConected   = @"HeatingClothesBLEConected";
 NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 
 
@@ -26,6 +27,7 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     if (!self.isInitialized) {
         self = [super init];
         if (self) {
+            self.myQueue  = dispatch_queue_create("luke",  DISPATCH_QUEUE_SERIAL);
         }
     }
     return self;
@@ -33,73 +35,13 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 
 - (void)setupService {
     [LGCentralManager sharedInstance];
-    self.myViewController=[[Connecting_ViewController alloc]init];
     [self initCacheDictionary];
-        //添加蓝牙连接断开监听
+    
+    //添加蓝牙连接断开监听
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleBLEDisconnected:) name:kLGPeripheralDidDisconnect object:nil];
 }
-//开始心跳
--(void)startTheHeart{
-    if (self.timer==nil) {
-        //2秒一个心跳包
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(KeepTheHeart) userInfo:nil repeats:YES];
-        self.myQueue  = dispatch_queue_create("luke", DISPATCH_QUEUE_SERIAL);
-        NSLog(@"心跳机制已开启");
-    }
-}
--(void)stopTheHeart{
-    if (_timer != nil) {
-        //销毁定时器
-        [_timer invalidate];
-        _timer=nil;
-        NSLog(@"心跳机制已停止");
-    }
-}
-//心跳  --串行异步
--(void)KeepTheHeart{
-    dispatch_async(self.myQueue , ^{
-        NSLog(@"够酷的唱歌：%@",[NSThread currentThread]) ;
-        
-        NSLog(@"心跳..............................................");
-        NSArray<LGPeripheral *> *deviceArr=[self.peripheralsDictionary allValues];
-        if (deviceArr.count<1) {
-            //假数据 发心跳
-            
-            NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-            [nc postNotificationName:@"HeartBeatRefresh_nil" object:nil];
-            NSLog(@"假心跳信息");
-            
-            return;
-        }
-        for (LGPeripheral *peripheral in deviceArr){
-            NSArray *array1 = [peripheral.name componentsSeparatedByString:@"#0x"];
-            NSString *deviceMac=array1[1]?array1[1]:@"";
-            NSLog(@"心跳 收到mac：%@",deviceMac);
-            NSLog(@"%@",[self.sendDataCharacteristicDictionary objectForKey:deviceMac]);
-            NSLog(@"%@",[self.reciveDataCharacteristicDictionary objectForKey:deviceMac]);
-            //心跳
-            LGCharacteristic *sendChara  =[self.sendDataCharacteristicDictionary objectForKey:deviceMac];
-            LGCharacteristic *reciveChara=[self.reciveDataCharacteristicDictionary objectForKey:deviceMac];
-            if (sendChara==nil||reciveChara==nil) {
-                NSLog(@"设备%@ ,心跳异常,特征有空值，停止心跳",deviceMac);
-                return;
-            }
-            //获取剩余时间
-            WarmShowInfoModel *model=[[HeatingClothesBLEService sharedInstance] ReadInfoFromBluetoothWith:deviceMac];
-            float time = model.remainingTime;
-            if (time==-1000){
-                NSLog(@"设备%@ ,心跳异常",deviceMac);
-                NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-                [nc postNotificationName:kLGPeripheralDidDisconnect object:peripheral];
-                
-            }
-            NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-            [nc postNotificationName:@"HeartBeatRefresh" object:model];
-            NSLog(@",心跳信息model:%@ ",model);
-        }
 
-});
-}
+
 //连接断开后的处理
 - (void)handleBLEDisconnected:(NSNotification *)n {
     LGPeripheral *nperipheral = n.object;
@@ -111,75 +53,114 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     [[NSNotificationCenter defaultCenter] postNotificationName:HeatingClothesBLEDisconnect object:macString];
 }
 #pragma mark - public methods
-#pragma mark  获取已绑定设备（数据库查询）
 - (NSArray *)getHaveBindingDevice{
-    NSArray *clothesInDataBase=[[LKDataBaseTool sharedInstance]showAllDataFromTable:nil];
+    NSArray *clothesInDataBase = [DataBase_Manager getAllBoundDevice];
     NSMutableArray *clothesMacArr=[[NSMutableArray alloc]init];
-    for (ClothesModel *model in clothesInDataBase) {
+    for (DeviceModel *model in clothesInDataBase) {
         [clothesMacArr addObject:model.clothesMac];
     }
     return clothesMacArr;
 }
 #pragma mark  开始扫描
 //开始扫描外围的设备
-- (void)StartScanningDeviceWithMac:(NSString *)mac{
+- (void)StartScanningDeviceWithMac:(NSString *)mac
+                           Success:(connectionSuccess)successBlock
+                           Failure:(connectionFailure)failureBlock
+                  andIsRunDelegate:(BOOL)isRun
+{
+    //如果它在线就不扫描了
+    if ([[HeatingClothesBLEService sharedInstance] queryIsBLEConnected:mac]) {
+        if (successBlock) {
+            successBlock(mac);
+        }
+        return;
+    }
+    
+    //取消上次扫描
+    [[LGCentralManager sharedInstance] stopScanForPeripherals];
+    
     //调用
      if (_delegate && [_delegate respondsToSelector:@selector(changeState:)]) {
-             [_delegate changeState:@"正在搜索设备..."];
-     }
-
-  HeatingClothesBLEService *myBLEService=[HeatingClothesBLEService sharedInstance];
-    // 扫描外围设备6秒 鲁柯
-    [[LGCentralManager sharedInstance] scanForPeripheralsByInterval:6
+             [_delegate changeState:LK(@"正在搜索设备...")];
+    }
+    
+    HeatingClothesBLEService *myBLEService=[HeatingClothesBLEService sharedInstance];
+    // 扫描外围设备2秒 鲁柯
+    [[LGCentralManager sharedInstance] scanForPeripheralsByInterval:2
                                                          completion:^(NSArray *peripherals)
      {
-         NSLog(@"单例界面--发现设备 %d个，要找的是%@",peripherals.count,mac);
-         for (LGPeripheral *p in peripherals) {
-             NSLog(@"%@",p.name);
-         }
-         BOOL isFound=NO;
+         LKLog(@"发现设备 %ld个，要找的是%@",peripherals.count,mac);
+         
+         BOOL isFound = NO;
          for (LGPeripheral *peripheral in peripherals){
              //mac地址是否合法判断
-             NSArray *array1 = [peripheral.name componentsSeparatedByString:@"#0x"];
-             NSString *peripheralMac=array1[array1.count-1];
+             NSArray *array1         = [peripheral.name componentsSeparatedByString:@"#0x"];
+             NSString *peripheralMac = array1[array1.count-1];
+             
+             
              if (mac==nil) {
                  //检验设备是否已绑定
                  NSArray<NSString *> *HaveBindingDevices=[[HeatingClothesBLEService sharedInstance] getHaveBindingDevice];
                  if ([LKTool DoesItIncludeTheElement:peripheralMac InTheArray:HaveBindingDevices]) {
                      isFound=YES;
-                     [myBLEService testPeripheral:peripheral WithMac:nil];
+                     [myBLEService testPeripheral:peripheral WithMac:nil Success:^(NSString *mac) {
+                         if (successBlock) {
+                             successBlock(mac);
+                         }
+                     } Failure:^(NSString *mac) {
+                         if (failureBlock) {
+                             failureBlock(mac);
+                         }
+                     } andIsRunDelegate:isRun];
                  }
              }
-             else {
+             else{
                  if ([peripheralMac isEqualToString:mac]) {
                      isFound=YES;
-                     [myBLEService testPeripheral:peripheral WithMac:mac];
+                     [myBLEService testPeripheral:peripheral WithMac:mac Success:^(NSString *mac) {
+                         if (successBlock) {
+                             successBlock(mac);
+                         }
+                     } Failure:^(NSString *mac) {
+                         if (failureBlock) {
+                             failureBlock(mac);
+                         }
+                     } andIsRunDelegate:isRun];
                  }
-                 
              }
-          }
+         }
          if (isFound==NO){
              [MBProgressHUD hideHUD];
-             //扫描都失败
+             //扫描都失败  连接失败了
              NSString *postMac;
              if (mac == nil) {
                  postMac = @"";
              }else{
                  postMac = mac;
              }
-             NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-                 NSNotification *notify   = [[NSNotification alloc]initWithName:@"ConnectionFails" object:postMac userInfo:nil];
-                 [nc postNotification:notify];
+             if (failureBlock) {
+                 failureBlock(postMac);
+             }
+             //显示检测设备界面
+               if (_showCheckFaceDelegate && [_showCheckFaceDelegate respondsToSelector:@selector(connectFailedShowCheckFace:)]) {
+                   [_showCheckFaceDelegate connectFailedShowCheckFace:postMac];
+             }
          }
      }];
 }
 
+
 - (void)testPeripheral:(LGPeripheral *)peripheral WithMac:(NSString *)macAddress
+               Success:(connectionSuccess)successBlock
+               Failure:(connectionFailure)failureBlock
+      andIsRunDelegate:(BOOL)isRun
 {
+    
+    
     //调用
      if (_delegate && [_delegate respondsToSelector:@selector(changeState:)]) {
-        [_delegate changeState:@"发现设备，连接中..."];
-     }
+        [_delegate changeState:LK(@"发现设备，连接中...")];
+    }
     
     //mac地址是否合法判断
     NSArray *array1 = [peripheral.name componentsSeparatedByString:@"#0x"];
@@ -191,11 +172,27 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
         NSLog(@"mac不合法");
         return;
     }
-    
+    __block BOOL isOk = NO;
+                                                                 
     //首先连接到外围
-    [peripheral connectWithCompletion:^(NSError *error) {
+    [peripheral LK_connectWithTimeout:5 completion:^(NSError *error) {
+        LKLog(@"connectWithCompletion：%@",error);
+        isOk = YES;
+        
         // 发现外设的服务
         [peripheral discoverServicesWithCompletion:^(NSArray *services, NSError *error) {
+            LKLog(@"蓝牙连接发现服务错误：%@",error.localizedDescription);
+            if (services.count<1 || services== nil) {
+                if (failureBlock) {
+                    failureBlock(macAddress);
+                }
+                NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+                NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+                [dic setObject:@"未发现服务" forKey:@"error"];
+                NSNotification *notify = [[NSNotification alloc]initWithName:LianJieShiBai_TZ object:macAddress userInfo:dic];
+                [nc postNotification:notify];
+                return ;
+            }
             for (LGService *service in services) {
                 NSLog(@"服务的UUID:%@",service.UUIDString);
                 // 找出我们的服务（我们关心的服务）
@@ -205,42 +202,64 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
                         for (LGCharacteristic *charact in characteristics) {
                             NSLog(@"特征名称(charact.UUIDString) ：%@",charact.UUIDString);
                             if ([charact.UUIDString isEqualToString:@"1001"]) {
-                                NSLog(@"成功写入写特性 mac：%@",peripheralMac);
-                                [self.sendDataCharacteristicDictionary setObject:charact forKey:peripheralMac];                                
+                                [self.sendDataCharacteristicDictionary setObject:charact forKey:peripheralMac];
+                                 NSLog(@"成功写入写特性 mac：字典%@",self.sendDataCharacteristicDictionary);
                             }
                             else if([charact.UUIDString isEqualToString:@"1002"]){
                                 [self.reciveDataCharacteristicDictionary setObject:charact forKey:peripheralMac];
-                                NSLog(@"成功写入读特性 mac：%@",peripheralMac);
+                                NSLog(@"成功写入读特性 mac：字典%@",self.reciveDataCharacteristicDictionary);
                             }
                         }
                         //验证mac地址
-                        LGCharacteristic *writeCharact=[self.sendDataCharacteristicDictionary objectForKey:peripheralMac];
-                        LGCharacteristic *readCharact=[self.reciveDataCharacteristicDictionary objectForKey:peripheralMac];
-                        NSString *mac=[[HeatingClothesBLEService sharedInstance] getBLEMacAddressAndDoVerify:writeCharact reciveCharacteristic:readCharact peripheral:peripheral];
-                        if (mac.length>10) {
-                           NSLog(@"成功写入设备 mac：%@",peripheralMac);
-                           [self.peripheralsDictionary setObject:peripheral forKey:peripheralMac];
-                            if (macAddress!=nil&&self.isBound==YES) {//这就是绑定设备的情景
-                                NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-                                NSNotification *notify = [[NSNotification alloc]initWithName:@"ConnectionSuccessful" object:peripheralMac userInfo:nil];
-                                [nc postNotification:notify];
-                            }else{
-                                NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-                                NSNotification *notify = [[NSNotification alloc]initWithName:@"ConnectionSuccessful_warm" object:peripheralMac userInfo:nil];
-                                [nc postNotification:notify];
-
+                        LGCharacteristic *writeCharact =[self.sendDataCharacteristicDictionary objectForKey:peripheralMac];
+                        LGCharacteristic *readCharact  =[self.reciveDataCharacteristicDictionary objectForKey:peripheralMac];
+                        NSString *mac = [[HeatingClothesBLEService sharedInstance] getBLEMacAddressAndDoVerify:writeCharact reciveCharacteristic:readCharact peripheral:peripheral];
+                        
+                        
+                        if (mac.length>10){
+                            NSLog(@"成功写入设备 mac：%@",peripheralMac);
+                            [self.peripheralsDictionary lk_setObject:peripheral forKey:peripheralMac];
+                            //缓存udid
+                            BLEUdidManager *bleManager = [[BLEUdidManager alloc]init];
+                            NSUUID *uuid = [[NSUUID alloc]initWithUUIDString:peripheral.UUIDString];
+                            [bleManager saveUUIDToDataBase_mac:mac andUUID:uuid];
+                            
+                            //连接成功
+                            if (successBlock) {
+                                successBlock(macAddress);
                             }
                         }else{
-                            NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-                            NSNotification *notify = [[NSNotification alloc]initWithName:@"ValidationMacfails" object:peripheralMac userInfo:nil];
-                            [nc postNotification:notify];
-
+                            //找到设备，但是验证失败。KC02连接失败
+                            if (failureBlock) {
+                                failureBlock(macAddress);
+                            }
+                            if (isRun == YES) {
+                                //显示检测设备界面
+                                  if (_showCheckFaceDelegate && [_showCheckFaceDelegate respondsToSelector:@selector(connectFailedShowCheckFace:)]) {
+                                      [_showCheckFaceDelegate connectFailedShowCheckFace:macAddress];
+                                }
+                            }
                         }
-                       
                     }];
                 }
             }
         }];
+    } TimeoutBlock:^{
+        LKLog(@"老岳超时了");
+        if (failureBlock) {
+            failureBlock(macAddress);
+        }
+
+        if (isRun == YES) {
+            //显示检测设备界面
+              if (_showCheckFaceDelegate && [_showCheckFaceDelegate respondsToSelector:@selector(connectFailedShowCheckFace:)]) {
+                  [_showCheckFaceDelegate connectFailedShowCheckFace:macAddress];
+            }
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+             LKRemove;
+        });
     }];
 }
 
@@ -252,7 +271,6 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 #pragma mark 获取信号强度
 - (NSInteger)getRSSI:(NSString *)macAddress {
     LGPeripheral *peripheral = [self getCachedPeripheral:macAddress];
-    
     __block NSInteger rssi = 0;
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     [peripheral readRSSIValueCompletion:^(NSNumber *RSSI, NSError *error) {
@@ -372,7 +390,6 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 - (int)getHeatStatus:(NSString *)macAddress  andandsendChara:(LGCharacteristic *)sendChara andreciveChara:(LGCharacteristic *)reciveChara{
     int countDownTime = [self getHeatingCountDownTime:macAddress andandsendChara:sendChara andreciveChara:reciveChara];
     NSLog(@"读取到的countDownTime: %d", countDownTime);
-    
     if (countDownTime <= 0 || countDownTime == 65535) {
         return 0;
     }
@@ -413,7 +430,7 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     NSData *dataMaxReturn =  [self doJob:sendChara writeValue:valueMax writelength:6 reciveCharacteristic:reciveChara];
     uint tempValueMin = (valueToWrite - 2) * 10;
     uint highTempValueMin = tempValueMin >> 8;
-    uint lowTempValueMin = tempValueMin & 0x00ff;
+    uint lowTempValueMin  = tempValueMin & 0x00ff;
     
     //最低温度
     Byte valueMin[] = {0xab, 0x1c, 0x00, 0x02, lowTempValueMin, highTempValueMin};
@@ -423,9 +440,7 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     BOOL isSucces=NO;
     if (maxSuccesFlag && minSuccesFlag) {//写入最高最低温度成功！！
         isSucces=YES;
-        NSMutableDictionary *dic = [LKPopupWindowManager sharedInstance].setTempDictionary;
-        int wenDu = valueToWrite;
-        [dic setObject:@(wenDu) forKey:macAddress];
+
     }
     return isSucces;
 }
@@ -550,7 +565,6 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     uint highValue = vr >> 8;
     uint lowValue = vr & 0x00ff;
     
-    
     Byte value7[] = {0xab, 0x08, 0x00, 0x12, lowValue, highValue};
     NSData *data7 = [self doJob:sendChara writeValue:value7 writelength:6 reciveCharacteristic:reciveChara];
     NSString *macText;
@@ -566,6 +580,22 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
         NSLog(@"验证未通过");
     }
     NSString *macUp=[macText uppercaseString];//大写
+    
+    if (macUp.length<3) {
+        //如果验证失败读下数据试试
+        //读一下数据
+        NSArray *array1     = [peripheral.name componentsSeparatedByString:@"#0x"];
+        NSString *deviceMac = array1[1]?array1[1]:@"";
+        
+        float temperature =  [self getDeviceCurrentTemperature:deviceMac andsendChara:sendChara andreciveChara:reciveChara];
+        LKLog(@"%f",temperature);
+        //如果温度处于正常阈值 （认定为验证成功）
+        if (temperature<70 && temperature >0) {
+            return [deviceMac uppercaseString];
+        }
+    }
+
+    
     return macUp;
 }
 
@@ -579,9 +609,9 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 
 #pragma mark 保存某设备
 - (void)saveDevice:(NSString *)macAddress peripheral:(LGPeripheral *)peripheral sendDataCharacteristic:(LGCharacteristic *)sendCharacteristic reciveDataCharacteristic:(LGCharacteristic *)reciveCharacteristic {
-    self.peripheralsDictionary[macAddress] = peripheral;
-    self.sendDataCharacteristicDictionary[macAddress] = sendCharacteristic;
-    self.reciveDataCharacteristicDictionary[macAddress] = reciveCharacteristic;
+     [self.peripheralsDictionary             lk_setObject:peripheral forKey:macAddress];
+     [self.sendDataCharacteristicDictionary   lk_setObject:sendCharacteristic forKey:macAddress];
+     [self.reciveDataCharacteristicDictionary lk_setObject:reciveCharacteristic forKey:macAddress];
 }
 
 #pragma mark 获取是否已缓存某设备
@@ -609,9 +639,9 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
 
 #pragma mark 清除设备
 - (void)cleanDevice:(NSString *)macAddress {
-    [self.peripheralsDictionary removeObjectForKey:macAddress];
-    [self.sendDataCharacteristicDictionary removeObjectForKey:macAddress];
-    [self.reciveDataCharacteristicDictionary removeObjectForKey:macAddress];
+    [self.peripheralsDictionary lk_removeObjectForKey:macAddress];
+    [self.sendDataCharacteristicDictionary lk_removeObjectForKey:macAddress];
+    [self.reciveDataCharacteristicDictionary lk_removeObjectForKey:macAddress];
 }
 
 #pragma mark 获取设备的mac地址
@@ -639,6 +669,7 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
         [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
     return hexString;
 }
+
 - (NSData *)hexStringToData:(NSString *)str
 {
     Byte bytes[str.length/2] ;
@@ -680,28 +711,6 @@ NSString * const HeatingClothesBLEDisconnect = @"HeatingClothesBLEDisconnect";
     return [macString uppercaseString];
 }
 
-#pragma mark - 读取展板信息
--(WarmShowInfoModel *)ReadInfoFromBluetoothWith:(NSString *)macAddress{
-    if (![self queryIsBLEConnected:macAddress]) {
-        return nil;
-    }
-    LGCharacteristic *read=[self getReciveDataCharacteristic:macAddress];
-    LGCharacteristic *Send=[self getSendDataCharacteristic :macAddress];
-    
-    //剩余倒计时时间
-    int HeatingCountDownTime = [self getHeatingCountDownTime:macAddress andandsendChara:Send andreciveChara:read];
-    float MaxSetedTemp       = [self getMaxSetedTemp:macAddress andandsendChara:Send andreciveChara:read];
-    float CurrentTemperature = [self getDeviceCurrentTemperature:macAddress andsendChara:Send andreciveChara:read];
-    int   restPower          = [self getPowerLeft:macAddress andandsendChara:Send andreciveChara:read];
-    
-    WarmShowInfoModel *model = [[WarmShowInfoModel alloc]init];
-    model.remainingTime =(float)HeatingCountDownTime;
-    model.presetTemperature  = MaxSetedTemp;
-    model.currentTemperature = CurrentTemperature;
-    model.mac = macAddress;
-    model.restPower =restPower;
-    return model;
-}
 
 -(int)getDaoJiShi_Mac:(NSString *)macAddress{
     if (![self queryIsBLEConnected:macAddress]) {

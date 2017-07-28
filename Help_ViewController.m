@@ -7,33 +7,28 @@
 //  帮助界面
 
 #import "Help_ViewController.h"
-#import "Webpdf_ViewController.h"
 @interface Help_ViewController ()<UIGestureRecognizerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *blackTimage;
 @property (weak, nonatomic) IBOutlet UIImageView *herHuimage;
+@property (weak, nonatomic) IBOutlet UILabel *chanpin;
 
 @end
 
 @implementation Help_ViewController
-
-
-
+-(void)viewWillAppear:(BOOL)animated{
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 50)];
-    title.textColor = [UIColor whiteColor];
-    title.backgroundColor = [UIColor clearColor];
-    title.textAlignment = NSTextAlignmentCenter;
-    title.text = @"帮 助";
-    title.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
-    self.navigationItem.titleView = title;
+    [self setTittleWithText:LK(@"帮 助")];
+
+        _chanpin.text=LK(@"产品说明书");
  
     //加边框
     [_blackTimage.layer setBorderColor:[UIColor whiteColor].CGColor];
         [_blackTimage.layer setBorderWidth:1];
         [_blackTimage.layer setMasksToBounds:YES];
     
-    [_herHuimage.layer setBorderColor:[UIColor whiteColor].CGColor];
+        [_herHuimage.layer setBorderColor:[UIColor whiteColor].CGColor];
         [_herHuimage.layer setBorderWidth:1];
         [_herHuimage.layer setMasksToBounds:YES];
 
@@ -48,20 +43,16 @@
     tap.delegate=self;
     [_herHuimage addGestureRecognizer:tap2];
 
-    
-    
 }
 
 -(void)clickblackT:(UITapGestureRecognizer *)tap{
-    Webpdf_ViewController *web=[[Webpdf_ViewController alloc]init];
-    web.pdfName=@"BlackT";
-    [self.navigationController pushViewController:web animated:NO];
-}
+//    NSFileManager 
+//    
+//    
+   }
 
 -(void)clickherHu:(UITapGestureRecognizer *)tap{
-    Webpdf_ViewController *web=[[Webpdf_ViewController alloc]init];
-    web.pdfName=@"呵护";
-    [self.navigationController pushViewController:web animated:NO];
+
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

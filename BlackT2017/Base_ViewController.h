@@ -10,4 +10,6 @@
 
 @interface Base_ViewController : UIViewController
 
+
+-(void)setTittleWithText:(NSString *)text;
 @end

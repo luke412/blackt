@@ -7,6 +7,9 @@
 //  绑定衣物2界面  写入衣物名字界面   写入衣物名称界面
 
 #import "BoundSetName_ViewController.h"
+#import "DataBaseManager.h"
+#import "BlueManager.h"
+
 
 @interface BoundSetName_ViewController ()<UIScrollViewDelegate>
 {
@@ -14,34 +17,74 @@
     NSArray        *nameArr;
     NSArray        *imagesArray;
     NSArray        *deviceStyleArr;   //设备类型
-
     NSString       *myDeviceStyle;
     UIPageControl  *pageControl;
 }
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField; //名字textfield
-@property (weak, nonatomic) IBOutlet UIButton *queDingBtn;
-
+@property (weak, nonatomic) IBOutlet UIView      *lineView;
+@property (weak, nonatomic) IBOutlet UIButton    *queDingBtn;
+@property(nonatomic,copy)   NSString             *myTitle;
 @end
 
 @implementation BoundSetName_ViewController
--(void)viewWillAppear:(BOOL)animated{
-    self.navigationItem.hidesBackButton=YES;
-    if (self.isModify==YES) {
-        self.navigationItem.hidesBackButton=NO;
-    }
+-(void)awakeFromNib{
+    [super awakeFromNib];
 }
-- (void)viewDidLoad {
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:NO];
+    [self.nameTextField becomeFirstResponder];
+    self.nameTextField.text = [self deviceQuMing];
+}
+
+//设备取名
+-(NSString *)deviceQuMing{
+    NSArray *devices = [DataBase_Manager getAllBoundDevice];
+    BOOL isFinish = NO;
+    for (NSInteger i=0; i<10000; i++) {
+        isFinish = NO;
+        NSString *name = [NSString stringWithFormat:@"设备%ld",i];
+        for (NSInteger i=0;i<devices.count;i++){
+            DeviceModel *device = devices[i];
+            if ([name isEqualToString:device.clothesName]) {
+                break;
+            }
+            
+            if (i+1 == devices.count) {
+                isFinish = YES;
+            }
+        }
+        if (isFinish == YES) {
+            return name;
+        }
+    }
+    return @"设备1";
+}
+- (void)viewDidLoad{
     [super viewDidLoad];
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 50)];
-    title.textColor = [UIColor whiteColor];
-    title.backgroundColor = [UIColor clearColor];
-    title.textAlignment = NSTextAlignmentCenter;
-    title.text = @"绑定衣物";
-    title.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
-    self.navigationItem.titleView = title;
+    [self setTittleWithText:LK(@"添加设备")];
+    [self UIlayOut];
+}
+-(void)UIlayOut{
+    //textfield
+    CGFloat textFieldLeft = lkptBiLi(26);
+    _nameTextField .frame = CGRectMake(textFieldLeft, lkptBiLi(183), WIDTH_lk-2*textFieldLeft, lkptBiLi(20));
     
-    //添加监听
-    //当键盘出现或改变时收出消息
+    //line
+    _lineView.frame  = CGRectMake(lkptBiLi(26), lkptBiLi(215), WIDTH_lk-2*textFieldLeft, 1);
+    
+    //确定按钮
+    _queDingBtn.frame = CGRectMake(lkptBiLi(40), lkptBiLi(303), lkptBiLi(241), lkptBiLi(50));
+    _queDingBtn.layer .cornerRadius  = 5;
+    
+    self.navigationItem.hidesBackButton = YES;
+      UIButton *rightButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,38,30)];
+        [rightButton setTitle:@"取消" forState:UIControlStateNormal];
+    [rightButton setTitleColor:[LKTool from_16To_Color:tableViewCellTextColor] forState:UIControlStateNormal];
+        [rightButton addTarget:self action:@selector(rightButtonClick)forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *rightItem = [[UIBarButtonItem alloc]initWithCustomView:rightButton];
+        self.navigationItem.leftBarButtonItem=rightItem;
+    
+    //增加监听，当键盘出现或改变时收出消息
     [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(keyboardWillShow:)
                                            name:UIKeyboardWillShowNotification
@@ -52,275 +95,141 @@
                                            selector:@selector(keyboardWillHide:)
                                            name:UIKeyboardWillHideNotification
                                            object:nil];
-    
-        UIButton *leftButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,40,60)];
-    leftButton.titleLabel.textAlignment = NSTextAlignmentLeft;
-        [leftButton setTitle:@"取消" forState:UIControlStateNormal];
-        [leftButton addTarget:self action:@selector(leftButtonClick)forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem *leftItem = [[UIBarButtonItem alloc]initWithCustomView:leftButton];
-        self.navigationItem.leftBarButtonItem =leftItem;
-    
-
-
-
-    [self createUI];
-}
--(void)leftButtonClick{
-    [self.navigationController popToRootViewControllerAnimated:NO];
-}
--(void)createUI{
-    imagesArray=@[@"BlackT高清2",@"护腰新图",@"其他衣物(2)"];
-    nameArr=    @[@"我的Black T",@"我的Black Care",@"其他衣物"];
-    deviceStyleArr=@[@"BlackT",@"护腰",@"其他"];
-    
-    self.nameTextField.text=nameArr[0];
-    //名字预处理，去重。
-    if (self.isModify==YES) {
-        NSArray *devices=[[LKDataBaseTool sharedInstance] showAllDataFromTable:nil];
-        for (ClothesModel *model in devices) {
-            if ([self.macAddress isEqualToString:model.clothesMac]) {
-                self.nameTextField.text=model.clothesName;
-            }
-        }
-    }else{
-        [self getName];
-    }
-    
-    
-    
-    myDeviceStyle          =deviceStyleArr[0];
-    scrollw=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 64, WIDTH_lk, WIDTH_lk/1.6+20)];
-    scrollw.contentSize=CGSizeMake(WIDTH_lk*imagesArray.count, 200);
-    scrollw.pagingEnabled=YES;
-    scrollw.tag=50;
-    scrollw.delegate=self;
-    scrollw.showsVerticalScrollIndicator = NO;
-    scrollw.showsHorizontalScrollIndicator = NO;
-    [self.view addSubview:scrollw];
-    [self createPageControl];
-    
-    for (int i=0;i<imagesArray.count; i++) {
-        UIImage *image=[UIImage imageNamed:imagesArray[i]];
-        UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(i*WIDTH_lk, 0, WIDTH_lk, WIDTH_lk/1.6)];
-        imageView.image=image;
-        [scrollw addSubview:imageView];
-    }
-    
-    if (self.isModify==YES) {
-        UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 50)];
-        title.textColor = [UIColor whiteColor];
-        title.backgroundColor = [UIColor clearColor];
-        title.textAlignment = NSTextAlignmentCenter;
-        title.text = @"修改衣物名称";
-        title.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
-        self.navigationItem.titleView = title;
-    }
-    
-    _queDingBtn.layer.masksToBounds =YES;
-    _queDingBtn.layer.cornerRadius =10;
-    _queDingBtn.titleLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
+   
 }
 
-//名字去重，预处理
--(void)getName{
-    NSArray *devices=[[LKDataBaseTool sharedInstance] showAllDataFromTable:nil];
-    for (int i=0; i<devices.count; i++){
-        ClothesModel *model=devices[i];
-        if ([self.nameTextField.text isEqualToString:model.clothesName]) {//如果重名了
-            NSString *str=self.nameTextField.text;
-            NSArray *arr = [str componentsSeparatedByCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"QWERTYUIOPLKJHGFDSAZXCVBNMpoiuytrewqasdfghjklmnbvcxz"]];
-            NSMutableArray *arrMut=[[NSMutableArray alloc]initWithArray:arr];
-            NSString *strLastChar=[arr lastObject];
-            NSScanner* scan = [NSScanner scannerWithString:strLastChar]; //定义一个NSScanner，扫描string
-                int val;
-                //如果末尾是数字
-                if([scan scanInt:&val] && [scan isAtEnd]){
-                    int lastNum=[strLastChar intValue];//末尾数字
-                    lastNum++;
-                    NSString *laststr=[NSString stringWithFormat:@"%d",lastNum];
-                    [arrMut removeLastObject];
-                    [arrMut addObject:laststr];
-                    NSMutableString *mutStr=[[NSMutableString alloc]initWithString:self.nameTextField.text];
-                NSRange range=[mutStr rangeOfString:strLastChar];
-                [mutStr deleteCharactersInRange:range];
-                [mutStr appendFormat:laststr];
-                self.nameTextField.text=mutStr;
-                    [self getName];
-                }else{
-                    self.nameTextField.text=[NSString stringWithFormat:@"%@2",self.nameTextField.text];//追加2
-                    [self getName];
-                }
-        }
-    }
-
-    
-}
--(void)createPageControl
-{
-        //创建pageControl,通常与ScrollView一起使用
-        pageControl =[[UIPageControl alloc]initWithFrame:CGRectMake(0,[LKTool getBottomY:scrollw]-50, self.view.frame.size.width, 40)];
-        //设置透明度
-        pageControl.alpha = 0.5;
-        //设置总页数
-        pageControl.numberOfPages = 3;
-        //设置当前选中的页
-        pageControl.currentPage = 0;
-        //设置选中页的小圆点的颜色
-        pageControl.currentPageIndicatorTintColor = [UIColor blackColor];
-        //设置非选中页的小圆点的颜色
-        pageControl.pageIndicatorTintColor = [UIColor blackColor];
-        //添加到当前视图控制器的View上
-        [self.view addSubview:pageControl];
-        
-}
-
-//减速结束，也就是停止滚动
--(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    //通过偏移量计算出当前显示的是第几张图片，_pageControl.currentPage表示选中的页，把算出得结果赋给_pageControl.currentPage
-    int index = scrollView.contentOffset.x /self.view.frame.size.width;
-    self.nameTextField.text=nameArr[index];
-    myDeviceStyle          =deviceStyleArr[index];
-    //获取衣物类型
-}
+#pragma mark - 键盘监听
 - (void)keyboardWillShow:(NSNotification *)aNotification
 {
         NSDictionary *userInfo = [aNotification userInfo];
         NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-        CGRect   keyboardRect = [aValue CGRectValue];
+        CGRect keyboardRect = [aValue CGRectValue];
         int height = keyboardRect.size.height;
         int width = keyboardRect.size.width;
+        NSLog(@"键盘高度是  %d",height);
+        NSLog(@"键盘宽度是  %d",width);
+    
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-        UIView   *firstResponder = [keyWindow performSelector:@selector(firstResponder)];
-        CGRect   firstResponderRect=[firstResponder convertRect:firstResponder.bounds toView:self.view];
+        UIView *firstResponder = [keyWindow performSelector:@selector(firstResponder)];
+        CGRect firstResponderRect=[firstResponder convertRect:firstResponder.bounds toView:self.view];
         
-        //拿到响应者底部纵坐标
-        CGFloat bottom=firstResponderRect.origin.y+firstResponderRect.size.height;
-        //不需上移
+        CGFloat bottom=  [LKTool getBottomY:_queDingBtn];
         if (bottom<HEIGHT_lk-height-20) {
+                NSLog(@"不会遮挡");
             }
-        //响应者位置偏低  视图需要上移 20为保留的余量
         else{
                 CGFloat cha=bottom-(HEIGHT_lk-height-20);
+                NSLog(@"cha:%f",cha);
                 self.view.frame=CGRectMake(0, -cha, WIDTH_lk, HEIGHT_lk);
+                
             }
 }
+ 
 //当键退出时调用
 - (void)keyboardWillHide:(NSNotification *)aNotification
 {
-     self.view.frame=CGRectMake(0, 0, WIDTH_lk, HEIGHT_lk);
+     self.view.frame = CGRectMake(0, 0, WIDTH_lk, HEIGHT_lk);
 }
+
+-(void)rightButtonClick{
+    [self.navigationController popToRootViewControllerAnimated:NO];
+    NSString *mac = App_Manager.QRcodeCacheMac;
+    [Blue_Manager disconnectWithMac:mac Sucess:nil Failure:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [MBProgressHUD showSuccess:@"已取消"];
+    });
+}
+#pragma mark - 用户事件
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
 }
-//确定按钮
-- (IBAction)click:(id)sender{
+- (IBAction)queDingClick:(id)sender {
     if (self.nameTextField.text.length<1) {
-        [MBProgressHUD showError:@"衣物名称不能为空"];
+        [MBProgressHUD showError:LK(@"设备名称不能为空")];
         return;
     }
     if (self.nameTextField.text.length>15) {
-        [MBProgressHUD showError:@"字符长度超过15位"];
+        [MBProgressHUD showError:LK(@"字符长度超过15位")];
         return;
     }
     
     NSMutableString *mutStr = [[NSMutableString alloc]initWithString:self.nameTextField.text];
-    NSString *str = [LKTool stringDeleteString:@" " fromStr:mutStr];
+    NSString *str           = [LKTool stringDeleteString:@" " fromStr:mutStr];
     if (str.length < 1){
-        [MBProgressHUD showError:@"名称不能为空"];
+        [MBProgressHUD showError:LK(@"名称不能为空")];
         return;
     }
-    
-    
-    if (self.isModify==YES) {
-        //检验是否重名
-        NSArray *clothes=[[LKDataBaseTool sharedInstance]showAllDataFromTable:nil];
-        for (ClothesModel *model in clothes) {
-            if ([self.nameTextField.text isEqualToString:model.clothesName]) {
-                [MBProgressHUD showError:@"此名称已被占用，请重新输入"];
-                self.nameTextField.text=@"";
-                return;
-            }
-        }
 
-        
-        //
-        
-        //将修改写入数据库
-        BOOL isSuccess=[[LKDataBaseTool sharedInstance]ModifytheNameFromTheTableWithMac:self.macAddress andNewName:self.nameTextField.text andStyle:myDeviceStyle];
-        if (isSuccess){
-            [MBProgressHUD showSuccess:@"修改名称成功"];
-            NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-            [nc postNotificationName:@"ModifyNameSuccess" object:self.macAddress];
-            [self performSelector:@selector(pop) withObject:nil afterDelay:1.2];
-        }else{
-            //弹窗
-            [MBProgressHUD showSuccess:@"修改名称失败"];
-        }
-
-    }
-    
-    
-    
-    
-    //将绑定衣物写入数据库
-    else{
-        //检验是否重名
-        NSArray *clothes=[[LKDataBaseTool sharedInstance]showAllDataFromTable:nil];
-        for (ClothesModel *model in clothes) {
-            if ([self.nameTextField.text isEqualToString:model.clothesName]){
-                [MBProgressHUD showError:@"此名称已被占用，请重新输入"];
-                self.nameTextField.text=@"";
-                return;
-            }
-        }
-        
-        NSString* returnText=[[LKDataBaseTool sharedInstance] InsertedIntoTheTableWithMacAddress:self.macAddress andName:self.nameTextField.text andStyle:myDeviceStyle];
-        if ([returnText isEqualToString:@"成功"]) {
-            [MBProgressHUD showSuccess:@"绑定成功"];
-            NSNotificationCenter *nc=[NSNotificationCenter defaultCenter];
-            NSLog(@"self还在不在：%@"           ,self);
-            NSLog(@"self.macAddress还在不在：%@",self.macAddress);
-            
-            [nc postNotificationName:@"BindingSuccess" object:self.macAddress];
-            [self performSelector:@selector(pop) withObject:nil afterDelay:1.2];
-        }else if([returnText hasSuffix:@"is not unique"]){
-            //弹窗
-            [[LKPopupWindowManager sharedInstance] showPopupWindow_clothesIsHasBeen_WithVC:self];
-        }else{
-            
+    //重名筛查
+    //检验是否重名
+    NSArray <DeviceModel *>*devices = [DataBase_Manager getAllBoundDevice];
+    for (DeviceModel *model in devices) {
+        if ([self.nameTextField.text isEqualToString:model.clothesName]) {
+            [MBProgressHUD showError:LK(@"此名称已被占用，请重新输入")];
+            self.nameTextField.text=@"";
+            return;
         }
     }
-    
-    
-    
-    
-}
--(void)pop{
-      [self.navigationController popToRootViewControllerAnimated:NO];
-}
--(void)get_nameBlock:(getNameBlock)myGetNameBlock{
-    self.myGetNameBlock=myGetNameBlock;
+
+    //上报mac
+    NSString *mac = [App_Manager.QRcodeCacheMac uppercaseString];
+    NSString *userId    = [App_Manager getUserId];
+    NSString *userToken = [App_Manager getUserToken];
+    NSString *deviceid  = [App_Manager getDeviceId];
+    LKShow(@"正在绑定...");
+    [NetWork_Manager macBind_userId:userId
+                          userToken:userToken
+                           deviceId:deviceid
+                              macNo:mac
+                         bindStatus:BangDing
+                            Success:^(id responseObject) {
+                                LKRemove;
+                                //插入数据库
+                                [self addDataBase_mac:mac];
+                            }Abnormal:^(id responseObject) {
+                                LKRemove;
+                                [MBProgressHUD showError:responseObject[@"retMsg"]];
+                            }Failure:^(NSError *error) {
+                                LKRemove;
+                                [MBProgressHUD showError:@"网络开小差~\(≧▽≦)/"];
+                            }];
 }
 
--(void)dealloc{
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        //移除所有self监听的所有通知
-        [nc removeObserver:self];
+-(void)addDataBase_mac:(NSString *)mac{
+    
+    BOOL isOk     = [DataBase_Manager addDeviceTodataBase_mac:mac andName:self.nameTextField.text andType:@""];
+    if (isOk) {
+        DeviceModel *device    = [[DeviceModel alloc]init];
+        device.clothesMac      = mac;
+        device.clothesName     = self.nameTextField.text;
+        device.deviceType      = @"";
+        App_Manager.currDevice = device;
+        [MBProgressHUD showSuccess:LK(@"绑定成功")];
+        double delayInSeconds = 1.2;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime,   dispatch_get_main_queue(), ^(void){
+            NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+            [nc postNotificationName:BindingSuccess_tongZhi  object:nil];
+            [self.navigationController popToRootViewControllerAnimated:NO];
+        });
+    }else {
+        [MBProgressHUD showSuccess:LK(@"绑定失败")];
+    }
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

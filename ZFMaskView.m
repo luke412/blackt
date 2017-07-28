@@ -30,13 +30,15 @@
     //遮罩层
     UIView * maskView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
     maskView.backgroundColor = [UIColor blackColor];
-    maskView.alpha = 0.5;
+    maskView.alpha = 0.7;
     maskView.layer.mask = [self maskLayer];
     [self addSubview:maskView];
     
+    
+    
     //提示框
     UILabel * hintLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width - 120, 60)];
-    hintLabel.text = @"将 二维码/条形码 放入框内中央，即可自动扫描";
+    hintLabel.text = LK(@"将 二维码/条形码 放入框内中央，即可自动扫描");
     hintLabel.center = CGPointMake(maskView.center.x, maskView.center.y + (self.frame.size.width - 120) * 0.5 + 40);
     hintLabel.textColor = [UIColor lightGrayColor];
     hintLabel.numberOfLines = 0;

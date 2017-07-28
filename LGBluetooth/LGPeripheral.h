@@ -82,7 +82,8 @@ extern NSString * const kConnectionMissingErrorMessage;
 typedef void(^LGPeripheralConnectionCallback)(NSError *error);
 typedef void(^LGPeripheralDiscoverServicesCallback)(NSArray *services, NSError *error);
 typedef void(^LGPeripheralRSSIValueCallback)(NSNumber *RSSI, NSError *error);
-
+//鲁柯增加
+typedef void(^LKTimeOutBlock)();
 #pragma mark - Public Interface -
 
 @interface LGPeripheral : NSObject
@@ -151,6 +152,12 @@ typedef void(^LGPeripheralRSSIValueCallback)(NSNumber *RSSI, NSError *error);
  */
 - (void)connectWithTimeout:(NSUInteger)aWatchDogInterval
                 completion:(LGPeripheralConnectionCallback)aCallback;
+
+//鲁柯添加超时回调
+/***/
+-(void)LK_connectWithTimeout:(NSUInteger)aWatchDogInterval
+                  completion:(LGPeripheralConnectionCallback)aCallback
+                TimeoutBlock:(void(^)())timeOutBlock;
 
 /**
  * Disconnects from peripheral peripheral

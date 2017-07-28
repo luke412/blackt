@@ -9,32 +9,59 @@
 #import "Base_ViewController.h"
 
 @interface Base_ViewController ()
-
 @end
 
 @implementation Base_ViewController
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:NO];
+     NSString *classStr=[NSString stringWithUTF8String:object_getClassName(self)];
+    if ([classStr isEqualToString:@"Main_ViewController"] ||
+        [classStr isEqualToString:@"WoDe_ViewController"] ||
+        [classStr isEqualToString:@"FaXian_ViewController"]
+        ) {
+        self.tabBarController.tabBar.hidden = NO;
+    }else{
+        self.tabBarController.tabBar.hidden = YES;
+    }
+    
+    
+}
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:NO];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     //导航条颜色
     [self.navigationController.navigationBar setBarTintColor:[LKTool from_16To_Color:NAV_COLOR]];
     self.navigationController.navigationBar.translucent = YES;
     self.automaticallyAdjustsScrollViewInsets = NO;
+    self.view.backgroundColor = [LKTool from_16To_Color:ThemeColor];
     
-    self.view.backgroundColor=[LKTool from_16To_Color:ThemeColor];
-
     //返回按钮上的字
     UIBarButtonItem *backIetm = [[UIBarButtonItem alloc] init];
-    backIetm.title =@"返回";//这是在基类里  所以可以在此写@“返回”  这样 就是中文"返回"了 这里为空
+    backIetm.title =LK(@"返回");                  //这是在基类里  所以可以在此写@“返回”  这样 就是中文"返回"了 这里为空
     self.navigationItem.backBarButtonItem = backIetm;
-    self.navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    self.navigationController.navigationBar.tintColor = [LKTool from_16To_Color:NAV_TEXT_COLOR];
+    
+    
 }
+-(void)setTittleWithText:(NSString *)text{
+    UILabel *title  = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 80, 50)];
+    title.textColor = [LKTool from_16To_Color:NAV_TEXT_COLOR];
+    title.backgroundColor   = [UIColor clearColor];
+    title.textAlignment     = NSTextAlignmentCenter;
+    title.text = LK(text);
+    title.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
+    self.navigationItem.titleView = title;
+    self.view.backgroundColor=[UIColor whiteColor];
+}
+
+
 
 - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+  [super didReceiveMemoryWarning];
 }
-
 /*
 #pragma mark - Navigation
 

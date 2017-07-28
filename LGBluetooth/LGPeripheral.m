@@ -53,6 +53,9 @@ NSString * const kConnectionMissingErrorMessage = @"BLE Device is not connected"
 @property (copy, atomic) LGPeripheralDiscoverServicesCallback discoverServicesBlock;
 @property (copy, atomic) LGPeripheralRSSIValueCallback        rssiValueBlock;
 
+//鲁柯添加
+@property(copy,atomic)LKTimeOutBlock    timeOutBlock;  //test连接超时的回调
+
 @property (readonly, nonatomic, getter = isConnected) BOOL connected;
 
 @end
@@ -111,6 +114,17 @@ NSString * const kConnectionMissingErrorMessage = @"BLE Device is not connected"
                withObject:nil
                afterDelay:aWatchDogInterval];
 }
+//鲁柯修改，增加超时回调
+-(void)LK_connectWithTimeout:(NSUInteger)aWatchDogInterval
+                  completion:(LGPeripheralConnectionCallback)aCallback
+                TimeoutBlock:(void(^)())timeOutBlock{
+    [self connectWithCompletion:aCallback];
+    self.timeOutBlock = timeOutBlock;
+    [self performSelector:@selector(connectionWatchDogFired)
+               withObject:nil
+               afterDelay:aWatchDogInterval];
+}
+
 
 - (void)disconnectWithCompletion:(LGPeripheralConnectionCallback)aCallback
 {
@@ -205,7 +219,6 @@ NSString * const kConnectionMissingErrorMessage = @"BLE Device is not connected"
     [self disconnectWithCompletion:^(NSError *error) {
         __strong LGPeripheral *strongSelf = weakSelf;
         if (strongSelf.connectionBlock) {
-            // Delivering connection timeout
             strongSelf.connectionBlock([self connectionErrorWithCode:kConnectionTimeoutErrorCode
                                                              message:kConnectionTimeoutErrorMessage]);
         }

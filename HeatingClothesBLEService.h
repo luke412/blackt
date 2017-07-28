@@ -6,8 +6,21 @@
 //  Copyright © 2016 AIKALife. All rights reserved.
 //
 
+typedef void(^connectionSuccess)(NSString *mac);
+typedef void(^connectionAbnormal)(NSString *mac);
+typedef void(^connectionFailure)(NSString *mac);
+
 #import <Foundation/Foundation.h>
 #import "LGBluetooth.h"
+
+
+
+/** 连接失败展示检测界面代理 */
+@protocol  showCheckFaceDelegate <NSObject>
+@required
+-(void)connectFailedShowCheckFace:(NSString *)mac;
+@end
+
 
 @protocol  ChangeStateDelegate <NSObject>
 @required
@@ -25,17 +38,16 @@ extern NSString * const HeatingClothesBLEDisconnect;
 
 @interface HeatingClothesBLEService : DOSingleton
 
-@property (nonatomic,strong)dispatch_queue_t myQueue;
+@property (nonatomic,strong)dispatch_queue_t myQueue;           //当前设备操作队列
+@property (nonatomic,strong)dispatch_queue_t myBackgroundQueue; //后台心跳队列
 
 
 @property(nonatomic,strong)NSTimer *timer;
+@property (nonatomic, weak  ) id <showCheckFaceDelegate> showCheckFaceDelegate;
 @property (nonatomic, weak) id <ChangeStateDelegate>delegate;
-@property(nonatomic,strong) Base_ViewController *myViewController;//存放需要跳转的界面
-@property(nonatomic,assign)BOOL isBound;     //是否是绑定操作
 @property(nonatomic, retain)NSMutableDictionary *peripheralsDictionary;
 @property(nonatomic, retain)NSMutableDictionary *sendDataCharacteristicDictionary;
 @property(nonatomic, retain)NSMutableDictionary *reciveDataCharacteristicDictionary;
-@property(nonatomic,assign)int SearchNumber;//搜索次数
 -(int)getDaoJiShi_Mac:(NSString *)macAddress;
 
 
@@ -43,14 +55,10 @@ extern NSString * const HeatingClothesBLEDisconnect;
 - (LGCharacteristic *)getSendDataCharacteristic:(NSString *)macAddress;
 - (LGPeripheral *)getCachedPeripheral:(NSString *)macAddress;
 -(float)getDangQianWenDu_Mac:(NSString *)macAddress;
-/*
- * 获取一个缓存设备
- */
+
+/** 获取一个缓存设备 */
 -(LGPeripheral *)getCachedPeripheral:(NSString *)mac;
-/*
- *  读取一个展板的信息
- */
--(WarmShowInfoModel *)ReadInfoFromBluetoothWith:(NSString *)macAddress;
+
 /*
  *  设置服务
  */
@@ -70,15 +78,20 @@ extern NSString * const HeatingClothesBLEDisconnect;
 /*
  *  开始扫描
  */
-- (void)StartScanningDeviceWithMac:(NSString *)mac;
-/*
- *  初始化记录字典（初始化缓存）
- */
+- (void)StartScanningDeviceWithMac:(NSString *)mac
+                           Success:(connectionSuccess)successBlock
+                           Failure:(connectionFailure)failureBlock
+                  andIsRunDelegate:(BOOL)isRun;
+
+/**  初始化记录字典（初始化缓存） */
 - (void)initCacheDictionary;
 /*
  *  尝试连接设备
  */
-- (void)testPeripheral:(LGPeripheral *)peripheral WithMac:(NSString *)mac;
+- (void)testPeripheral:(LGPeripheral *)peripheral WithMac:(NSString *)macAddress
+               Success:(connectionSuccess)successBlock
+               Failure:(connectionFailure)failureBlock
+      andIsRunDelegate:(BOOL)isRun;
 /*
  *  向指定设备发射心跳命令，防止其断开连接
  */

@@ -16,6 +16,10 @@
 #define iPhone6p 7
 #define iPadAir  8
 #define iPadPro  9
+#define lkptBiLi(value_px)   [LKTool fromPxToPt_BiLi:value_px]
+#define LKFont(x)             [LKTool qsh_systemFontOfSize:x]
+#define WeakObj(o)              __weak typeof(o) o##Weak = o;
+
 
 //16进制色值变rgb宏
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:((float)((rgbValue & 0xFF000000) >> 24))/255.0]
@@ -25,6 +29,13 @@
 #define BEN_YUE  11//本月
 #define BEN_NIAN 12
 @interface LKTool : NSObject
+
+//字体转换  pt--->px 
++ (UIFont *)qsh_systemFontOfSize:(CGFloat)pxSize;
+
+
+
++(CGFloat)fromPxToPt_BiLi:(CGFloat)value_px;
 #pragma mark UUID  钥匙串
 /**
   *  判断一个是否包含某个object
@@ -118,4 +129,17 @@
 
 +(dispatch_queue_t)createlukeQueue;
 +(int)iPhoneStyle;
+
+//验证字符串是否为纯数字
++ (BOOL)isPureInt:(NSString *)string;
++(void)setView_X:(CGFloat)x andView:(UIView *)view;
++(void)setView_Y:(CGFloat)y andView:(UIView *)view;
++(void)setView_Width:(CGFloat)width andView:(UIView *)view;
++(void)setView_Height:(CGFloat)height andView:(UIView *)view;
++(void)setView_CenterX:(CGFloat)centerX andView:(UIView *)view;
++(void)setView_CenterY:(CGFloat)centerY andView:(UIView *)view;
+
+//获取顶部坐标
++(CGFloat)getTopY:(UIView *)view;
+
 @end

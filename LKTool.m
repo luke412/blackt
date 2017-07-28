@@ -7,15 +7,48 @@
 #import "LKTool.h"
 #import "Base_ViewController.h"
 @implementation LKTool
++ (UIFont *)qsh_systemFontOfSize:(CGFloat)pxSize{
+    
+//    CGFloat pt = (pxSize/96)*72;
+//    
+//    
+//    NSLog(@"pt--%f",pt);
+//    
+//    CGFloat ptZhnegShu = floorf(pt);
+//    
+//    
+//    UIFont *font = [UIFont systemFontOfSize:ptZhnegShu];
+//    
+//    return font;
+    
+    
+        CGFloat pt = (pxSize)/(96/72);
+    
+        NSLog(@"pt--%f",pt);
+    
+        CGFloat ptZhnegShu = ceilf(pt);
+    
+    
+        UIFont *font = [UIFont systemFontOfSize:ptZhnegShu];
+        
+        return font;
+    
+}
+
+
 +(BOOL)DoesItIncludeTheElement:(NSString *)element InTheArray:(NSArray<NSString *>*)array{
     for (NSString *str in array) {
         if ([element isEqualToString:str]) {
+            
             return YES;
         }
     }
     return NO;
 }
 #pragma mark 16进制转RGB 颜色
++(CGFloat)fromPxToPt_BiLi:(CGFloat)value_px{
+    return  value_px /320 * WIDTH_lk;
+}
 + (NSInteger) calcDaysFromBegin:(NSDate *)beginDate end:(NSDate *)endDate
 {
         //创建日期格式化对象
@@ -32,6 +65,12 @@
         return days;
 }
 
+//获取顶部坐标
++(CGFloat)getTopY:(UIView *)view{
+    CGFloat topY=view.frame.origin.y;
+        return topY;
+    
+}
 //获得控件最右边的坐标
 +(CGFloat)getRightX:(UIView *)view{
         CGFloat rightX=view.frame.origin.x+view.frame.size.width;
@@ -47,6 +86,11 @@
          NSString *jsonStr=[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
          NSLog(@"json字符串为：%@",jsonStr);
          return jsonStr;
+}
++ (BOOL)isPureInt:(NSString *)string{
+    NSScanner* scan = [NSScanner scannerWithString:string];
+    int val;
+    return [scan scanInt:&val] && [scan isAtEnd];
 }
 
 +(UIColor *)from_16To_Color:(NSString *)str_16{
@@ -572,7 +616,7 @@
 //    //           NSParameterAssert(nil);
 //    //        }
 //            
-//            return manager;
+//    return manager;
 //}
 
 
@@ -666,5 +710,22 @@
 //        // [SFHFKeychainUtils deleteItemForUsername:@"dd" andServiceName:SERVICE_NAME error:nil];
 //        return passWord;
 //}
-
++(void)setView_X:(CGFloat)x andView:(UIView *)view{
+    view.frame = CGRectMake(x, view.frame.origin.y, view.frame.size.width, view.frame.size.height);
+}
++(void)setView_Y:(CGFloat)y andView:(UIView *)view{
+    view.frame = CGRectMake(view.frame.origin.x, y, view.frame.size.width, view.frame.size.height);
+}
++(void)setView_Width:(CGFloat)width andView:(UIView *)view{
+    view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y,width, view.frame.size.height);
+}
++(void)setView_Height:(CGFloat)height andView:(UIView *)view{
+    view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y,view.frame.size.width,height);
+}
++(void)setView_CenterX:(CGFloat)centerX andView:(UIView *)view{
+    view.frame = CGRectMake(centerX-view.frame.size.width/2, view.frame.origin.y,view.frame.size.width,view.frame.size.height);
+}
++(void)setView_CenterY:(CGFloat)centerY andView:(UIView *)view{
+    view.frame = CGRectMake(view.frame.origin.x, centerY-view.frame.size.height/2,view.frame.size.width,view.frame.size.height);
+}
 @end

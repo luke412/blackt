@@ -201,7 +201,6 @@ static void AFNetworkReachabilityReleaseCallback(const void *info) {
 
 - (void)startMonitoring {
     [self stopMonitoring];
-
     if (!self.networkReachability) {
         return;
     }

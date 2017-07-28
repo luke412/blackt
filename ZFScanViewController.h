@@ -11,7 +11,7 @@
 #import "ZFMaskView.h"
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
-@interface ZFScanViewController : UIViewController
+@interface ZFScanViewController : Base_ViewController
 /** 输入输出的中间桥梁 */
 @property (nonatomic, strong) AVCaptureSession * session;
 /** 扫描结果 */

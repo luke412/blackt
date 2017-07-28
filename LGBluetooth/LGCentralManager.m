@@ -176,22 +176,20 @@
 	NSString *message = nil;
 	switch (self.manager.state) {
 		case CBCentralManagerStateUnsupported:
-			message = @"The platform/hardware doesn't support Bluetooth Low Energy.";
+			message = @"平台/硬件不支持蓝牙低能耗";
 			break;
 		case CBCentralManagerStateUnauthorized:
-			message = @"The app is not authorized to use Bluetooth Low Energy.";
+			message = @"该应用程序没有授权使用蓝牙低能量";
 			break;
         case CBCentralManagerStateUnknown:
-            message = @"Central not initialized yet.";
+            message = @"中央尚未初始化";
             break;
         case CBCentralManagerStatePoweredOff:{
-			 message = @"Bluetooth is currently powered off.";
-             NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-             NSNotification *notify = [[NSNotification alloc]initWithName:@"BluetoothOff" object:nil userInfo:nil];
-             [nc postNotification:notify];
+			 message = @"蓝牙关闭状态";
              break;
             }
 		case CBCentralManagerStatePoweredOn:
+            message = @"蓝牙已开启";
             break;
 		default:
 			break;
@@ -276,7 +274,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         LGPeripheral *lgPeripheral = [self wrapperByPeripheral:peripheral];
         if (!lgPeripheral.RSSI) {
-            lgPeripheral.RSSI = [RSSI integerValue];
+             lgPeripheral.RSSI = [RSSI integerValue];
         } else {
             // Calculating AVG RSSI
             lgPeripheral.RSSI = (lgPeripheral.RSSI + [RSSI integerValue]) / 2;
@@ -314,7 +312,8 @@ static LGCentralManager *sharedInstance = nil;
 	self = [super init];
 	if (self) {
         _centralQueue = dispatch_queue_create("com.LGBluetooth.LGCentralQueue", DISPATCH_QUEUE_SERIAL);
-        _manager      = [[CBCentralManager alloc] initWithDelegate:self queue:self.centralQueue];
+       //_manager      = [[CBCentralManager alloc] initWithDelegate:self queue:self.centralQueue];
+        _manager      = [[CBCentralManager alloc] initWithDelegate:self queue:self.centralQueue options:nil];
         _cbCentralManagerState = _manager.state;
         _scannedPeripherals = [NSMutableArray new];
         _peripheralsCountToStop = NSUIntegerMax;
