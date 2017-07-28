@@ -338,7 +338,7 @@
     [mapView setRegion:region animated:YES];
     myUserLocation = userLocation;
     [mapView setCenterCoordinate:userLocation.location.coordinate animated:YES];
-    [mapView updateLocationData:userLocation];
+    [mapView updateLocationData:userLocation]
 }
 
 
